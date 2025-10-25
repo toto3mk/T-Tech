@@ -58,7 +58,7 @@ The server provides one main endpoint:
 
 | Method | Path | Description |
 | :--- | :--- | :--- |
-| `GET` | `/` | Serves the main `in.html` frontend. |
+| `GET` | `/` | Serves the main `index.html` frontend. |
 | `POST`| `/api/project-submission` | Receives form data (as JSON) and saves it to the SQLite database. |
 
 ---
