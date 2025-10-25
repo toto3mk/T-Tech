@@ -28,7 +28,7 @@ A full-stack project inquiry form for a tech consultancy. This application featu
 
 1.  Clone this repository:
     ```bash
-    git clone [https://github.com/toto3mk/T-Tech.git](https://github.com/toto3mk/T-Tech.git)
+    git clone https://github.com/toto3mk/T-Tech.git
     cd T-Tech
     ```
 2.  Install the required npm packages:
