@@ -7,15 +7,13 @@ This is a full-stack web application that serves a professional project inquiry 
 
 🚀 Features
 
-    Responsive Frontend: A clean, single-page inquiry form built with Tailwind CSS.
+    Responsive Frontend: A clean, single-page inquiry form built with Tailwind CSS
 
-    Node.js Backend: An Express.js server to handle API requests.
+    Node.js Backend: An Express.js server to handle API requests
 
-    Persistent Storage: All form submissions are saved to a server-side SQLite database file (projects.db).
+    Persistent Storage: All form submissions are saved to a server-side SQLite database file (projects.db)
 
-    Client-Side Validation: JavaScript ensures all required fields are filled and correctly formatted before submission.
-
-    AI Integration: A (currently disabled) "Generate Project Brief" button that can call the Gemini API to help users write their project description.
+    Client-Side Validation: JavaScript ensures all required fields are filled and correctly formatted before submission
 
 🛠️ Tech Stack
 
