@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-Tech Software Solutions - Project Inquiry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+        }
+        .form-input {
+            @apply w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="text-2xl font-extrabold text-blue-600 tracking-wider">
+                T-Tech <span class="text-gray-900 font-medium text-xl">Solutions</span>
+            </div>
+            <nav class="hidden md:flex space-x-8 text-gray-600 font-medium">
+                <a href="#" class="hover:text-blue-600 transition">Home</a>
+                <a href="#form-section" class="text-blue-600 font-bold">Start Project</a>
+                <a href="#" class="hover:text-blue-600 transition">Services</a>
+                <a href="#" class="hover:text-blue-600 transition">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <section class="bg-gray-800 text-white py-16 md:py-24 text-center">
+            <h1 class="text-4xl sm:text-5xl font-bold mb-4">Innovate Your Future with T-Tech</h1>
+            <p class="text-xl text-gray-300 mb-8">Custom software solutions for every challenge</p>
+            <a href="#form-section" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
+                Start Your Project Inquiry
+            </a>
+        </section>
+
+        <section id="form-section" class="max-w-4xl mx-auto p-6 md:p-10 my-12 bg-white rounded-xl shadow-2xl">
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-2">New Project Consultation</h2>
+            <p class="text-gray-600 mb-8">Please provide the necessary details for your project so our team can provide the most accurate estimate and proposal</p>
+
+            <div id="message-box" class="hidden p-4 mb-6 rounded-lg font-medium text-center" role="alert"></div>
+
+            <form id="project-form" class="space-y-6">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-b pb-6">
+                    <div>
+                        <label for="clientName" class="block text-sm font-medium text-gray-700 mb-1">Client Name <span class="text-red-500">*</span></label>
+                        <input type="text" id="clientName" placeholder="Taha" class="form-input" required>
+                    </div>
+                    <div>
+                        <label for="contactPerson" class="block text-sm font-medium text-gray-700 mb-1">Contact Person <span class="text-red-500">*</span></label>
+                        <input type="text" id="contactPerson" placeholder="Fadhil" class="form-input" required>
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address <span class="text-red-500">*</span></label>
+                        <input type="email" id="email" placeholder="test@example.com" class="form-input" required>
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number <span class="text-red-500">*</span></label>
+                        <input type="tel" id="phone" placeholder="07822719497" class="form-input" required>
+                        <p class="text-xs text-gray-500 mt-1">Without Spaces</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="md:col-span-3">
+                        <label for="projectName" class="block text-sm font-medium text-gray-700 mb-1">Project Name <span class="text-red-500">*</span></label>
+                        <input type="text" id="projectName" placeholder="Mobile Inventory Management App" class="form-input" required>
+                    </div>
+
+                    <div>
+                        <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">Target Due Date <span class="text-red-500">*</span></label>
+                        <input type="date" id="dueDate" class="form-input" required>
+                    </div>
+                    <div>
+                        <label for="budget" class="block text-sm font-medium text-gray-700 mb-1">Estimated Budget (USD) <span class="text-red-500">*</span></label>
+                        <input type="number" id="budget" placeholder="Example 50000" min="1" class="form-input" required>
+                    </div>
+                    <div class="md:col-span-1">
+                         <label for="duration" class="block text-sm font-medium text-gray-700 mb-1">Project Duration (Months) </label>
+                        <input type="number" id="duration" placeholder="Example 3" min="1" class="form-input">
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50">
+                        Submit Inquiry
+                    </button>
+                </div>
+
+            </form>
+        </section>
+        
+        <section class="max-w-4xl mx-auto p-6 md:p-10 my-12 bg-gray-100 rounded-xl shadow-inner hidden" id="output-section">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Submission Summary</h2>
+            <div id="output-data" class="bg-white p-6 rounded-lg border border-gray-200">
+                </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-900 text-white py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p>&copy; <span id="currentYear"></span> T-Tech Software Solutions. All rights reserved</p>
+            <p class="mt-2 text-gray-400">Driving digital excellence, one solution at a time</p>
+        </div>
+    </footer>
+
+    <script>
+
+
+        const SERVER_ENDPOINT = "http://YourServerIp/api/project-submission"; 
+
+
+
+        /**
+         * Executes a fetch request with exponential backoff retries.
+         */
+        async function exponentialBackoffFetch(url, options, maxRetries = 3) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    // Only retry on rate limit (429) or server errors (5xx)
+                    if (response.status !== 429 && response.status < 500) {
+                        return response;
+                    }
+                } catch (error) {
+                    console.warn(`Fetch attempt ${i + 1} failed.`, error);
+                }
+                
+                if (i < maxRetries - 1) {
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+            throw new Error(`API request failed after ${maxRetries} attempts.`);
+        }
+
+        // Application Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            const form = document.getElementById('project-form');
+            const messageBox = document.getElementById('message-box');
+            const outputSection = document.getElementById('output-section');
+            // Removed generateBriefButton and loadingIndicator
+            
+            //  Utility Functions 
+
+            /**
+             * Displays a formatted message in the message box
+             */
+            function showMessage(message, isError) {
+                messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
+                
+                if (isError) {
+                    messageBox.classList.add('bg-red-100', 'text-red-700', 'border', 'border-red-400');
+                    messageBox.innerHTML = message;
+                } else {
+                    messageBox.classList.add('bg-green-100', 'text-green-700', 'border', 'border-green-400');
+                    messageBox.textContent = message;
+                }
+                
+                messageBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+          
+
+            //  Form Validation and Submission (MODIFIED for Server Send) 
+            
+            form.addEventListener('submit', async (e) => { // Made the function async
+                e.preventDefault(); 
+
+                // Clear previous messages/outputs
+                messageBox.classList.add('hidden');
+                outputSection.classList.add('hidden');
+                
+                let isValid = true;
+                const data = {};
+                let errors = [];
+
+                const getFieldValue = (id) => {
+                    const input = document.getElementById(id);
+                    // Check if input exists before trying to access its properties
+                    if (!input) {
+                        return ''; // Element doesn't exist, return empty string
+                    }
+                    
+                    const value = input.value.trim();
+                    if (input.hasAttribute('required') && value === '') {
+                        errors.push(`${input.previousElementSibling.textContent.replace(' *', '').trim()} is required.`);
+                        input.classList.add('border-red-500');
+                        isValid = false;
+                    } else {
+                        input.classList.remove('border-red-500');
+                    }
+                    data[id] = value;
+                    return value;
+                };
+
+                const clientName = getFieldValue('clientName');
+                const contactPerson = getFieldValue('contactPerson');
+                const email = getFieldValue('email');
+                const phone = getFieldValue('phone');
+                const projectName = getFieldValue('projectName');
+                const dueDate = getFieldValue('dueDate');
+                const budget = getFieldValue('budget');
+                const duration = getFieldValue('duration'); 
+
+                // Specific Validation Rules 
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (email && !emailRegex.test(email)) {
+                    errors.push('Please enter a valid email address.');
+                    document.getElementById('email').classList.add('border-red-500');
+                    isValid = false;
+                }
+                
+                const phoneRegex = /^\+?[\d\s\(\)-]{7,15}$/; 
+                if (phone && !phoneRegex.test(phone.replace(/\s/g, ''))) {
+                    errors.push('Please enter a valid phone number (digits and common separators only).');
+                    document.getElementById('phone').classList.add('border-red-500');
+                    isValid = false;
+                }
+
+                const budgetValue = parseFloat(budget);
+                if (budget && (isNaN(budgetValue) || budgetValue <= 0)) {
+                    errors.push('Budget must be a positive monetary value.');
+                    document.getElementById('budget').classList.add('border-red-500');
+                    isValid = false;
+                } else if (budget) {
+                    data['budget'] = budgetValue; 
+                }
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const selectedDate = new Date(dueDate);
+                if (dueDate && selectedDate < today) {
+                    errors.push('The Target Due Date cannot be in the past.');
+                    document.getElementById('dueDate').classList.add('border-red-500');
+                    isValid = false;
+                }
+
+                // Handle Validation Result
+                if (!isValid) {
+                    const errorHtml = `
+                        <p class="mb-2 font-bold">Please correct the following errors:</p>
+                        <ul class="list-disc list-inside space-y-1">
+                            ${errors.map(err => `<li class="text-sm">${err}</li>`).join('')}
+                        </ul>
+                    `;
+                    showMessage(errorHtml, true);
+                    return;
+                }
+                
+                // Send Data to Server
+                const submitButton = e.submitter; 
+                submitButton.disabled = true;
+                submitButton.textContent = 'Sending Inquiry...';
+
+                try {
+                    const response = await exponentialBackoffFetch(SERVER_ENDPOINT, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // You might need to add an Authorization header if your server requires it
+                        },
+                        body: JSON.stringify(data)
+                    }, 1); // Only 1 retry for form submission
+
+                    if (response.ok) {
+                        // Success
+                        
+                        // Try to parse server response for more details, if any
+                        let serverMessage = 'Your inquiry has been successfully transmitted.';
+                        try {
+                            const serverResult = await response.json();
+                            if (serverResult.message) {
+                                serverMessage = serverResult.message;
+                            }
+                        } catch (e) {
+                            // Server response might not be JSON, just use default message
+                        }
+
+                        showMessage(`Success! ${serverMessage} A T-Tech representative will contact you shortly.`, false);
+                        form.reset(); // Clear form on successful submission
+                    } else {
+                        // Failure: Server returned non-2xx status code (e.g., 404, 500)
+                        let errorDetails = `Error: ${response.status} ${response.statusText}`;
+                        try {
+                            const errorJson = await response.json();
+                            if (errorJson.message) {
+                                errorDetails = errorJson.message;
+                            }
+                        } catch (e) {
+                            // Non-JSON error body
+                        }
+                        throw new Error(`Server failed to process inquiry. Details: ${errorDetails}`);
+                    }
+
+                } catch (error) {
+                    console.error('Submission failed:', error);
+                    showMessage(`Submission failed due to a network or server error. Please ensure your server is running and configured correctly. (${error.message})`, true);
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Submit Inquiry';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
