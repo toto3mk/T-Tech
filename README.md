@@ -1,88 +1,72 @@
-# T-Tech
-A Software Solution Company
+# T-Tech Project Inquiry Portal
 
-T-Tech Project Inquiry Portal
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
 
-This is a full-stack web application that serves a professional project inquiry form for a tech consultancy. It captures user data, saves it to a local SQLite database, and includes an optional AI-powered feature to help users generate a project brief.
+A full-stack project inquiry form for a tech consultancy. This application features a responsive frontend, a Node.js backend, and saves all submissions to a local SQLite database.
 
-🚀 Features
+## 📸 Preview
 
-    Responsive Frontend: A clean, single-page inquiry form built with Tailwind CSS
+*Note: For this image to show, you must `git add image_9868a3.png`, `git commit`, and `git push` the screenshot file to your repository.*
 
-    Node.js Backend: An Express.js server to handle API requests
+![Project Inquiry Form Screenshot](image_9868a3.png)
 
-    Persistent Storage: All form submissions are saved to a server-side SQLite database file (projects.db)
+---
 
-    Client-Side Validation: JavaScript ensures all required fields are filled and correctly formatted before submission
+## ✨ Features
 
-🛠️ Tech Stack
+* **Responsive Frontend:** A clean, single-page inquiry form built with **HTML** and **Tailwind CSS**.
+* **Node.js Backend:** An **Express.js** server to handle API requests.
+* **Persistent Storage:** All form submissions are saved to a server-side **SQLite** database (`projects.db`).
+* **Client-Side Validation:** JavaScript ensures all required fields are filled and correctly formatted before submission.
 
-    Frontend: HTML, Tailwind CSS, JavaScript (Fetch API)
+---
 
-    Backend: Node.js, Express.js
+## 🚀 Getting Started
 
-    Database: SQLite (using the sqlite3 npm package)
+### 1. Prerequisites
 
-    Utilities: cors
+- [Node.js](https://nodejs.org/) (v18 or later)
 
-🚦 How to Run
+### 2. Installation & Setup
 
-Follow these instructions to get the project running on your local machine.
-
-1. Prerequisites
-
-You must have Node.js (which includes npm) installed on your system.
-
-2. Installation
-
-    Clone the repository:
-   
-    Bash
-
-git clone https://github.com/toto3mk/T-Tech.git
-cd T-Tech
-
-Install backend dependencies: This will install express, sqlite3, and cors.
-Bash
-
+1.  Clone this repository:
+    ```bash
+    git clone [https://github.com/toto3mk/T-Tech.git](https://github.com/toto3mk/T-Tech.git)
+    cd T-Tech
+    ```
+2.  Install the required npm packages:
+    ```bash
     npm install
+    ```
 
-    (Note: You may need to create a package.json first with npm init -y if you don't have one.)
+### 3. Run the Server
 
-3. Running the Application
-
-    Start the server:
-    Bash
-
+1.  Start the application:
+    ```bash
     node server.js
+    ```
+2.  The server will start, and you'll see a confirmation in your terminal:
+    ```
+    Server is running! Open http://YOUR_SERVER_IP:3000 in your browser.
+    Connected to the projects SQLite database.
+    Table 'inquiries' is ready.
+    ```
+3.  Open your browser and navigate to `http://YOUR_SERVER_IP:3000` to use the form.
 
-    View the application: Open your web browser and navigate to: http://localhost:3000
+---
 
-The server will start, automatically create the projects.db file, and serve the in.html page.
+## 🔌 API Endpoint
 
-📂 Project Structure
+The server provides one main endpoint:
 
-/my_website_node
-│
+| Method | Path | Description |
+| :--- | :--- | :--- |
+| `GET` | `/` | Serves the main `in.html` frontend. |
+| `POST`| `/api/project-submission` | Receives form data (as JSON) and saves it to the SQLite database. |
 
-├── in.html   
-# The main HTML frontend file
-├── server.js    
-# The Node.js / Express backend server
-├── projects.db   
-# The SQLite database (auto-generated)
-├── package.json   
-# Node.js project dependencies
-└── package-lock.json
+---
 
-🔌 API Endpoint
-
-    GET /
-
-        Description: Serves the main in.html page.
-
-    POST /api/project-submission
-
-        Description: Receives the new project inquiry as a JSON payload.
-
-        Action: Saves the data to the inquiries table in the projects.db database.
+## 📂 Project Structure
