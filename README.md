@@ -9,9 +9,7 @@ A full-stack project inquiry form for a tech consultancy. This application featu
 
 ## 📸 Preview
 
-*Note: For this image to show, you must `git add image_9868a3.png`, `git commit`, and `git push` the screenshot file to your repository.*
-
-![Project Inquiry Form Screenshot](image_9868a3.png)
+![Project Inquiry Form Screenshot](Screenshot from 2025-10-25 18-06-45.png)
 
 ---
 
@@ -70,3 +68,4 @@ The server provides one main endpoint:
 ---
 
 ## 📂 Project Structure
+. ├── 📄 in.html (The HTML frontend) ├── 📄 server.js (The Node.js/Express backend) ├── 💾 projects.db (The SQLite database, auto-generated) ├── 🗃️ package.json ├── 🗃️ package-lock.json
