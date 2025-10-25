@@ -64,10 +64,15 @@ The server will start, automatically create the projects.db file, and serve the 
 
 /my_website_node
 │
-├── in.html                 # The main HTML frontend file
-├── server.js               # The Node.js / Express backend server
-├── projects.db             # The SQLite database (auto-generated)
-├── package.json            # Node.js project dependencies
+
+├── in.html   
+# The main HTML frontend file
+├── server.js    
+# The Node.js / Express backend server
+├── projects.db   
+# The SQLite database (auto-generated)
+├── package.json   
+# Node.js project dependencies
 └── package-lock.json
 
 🔌 API Endpoint
