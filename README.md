@@ -7,10 +7,6 @@
 
 A full-stack project inquiry form for a tech consultancy. This application features a responsive frontend, a Node.js backend, and saves all submissions to a local SQLite database.
 
-## 📸 Preview
-
-![Project Inquiry Form Screenshot](Screenshot from 2025-10-25 18-06-45.png)
-
 ---
 
 ## ✨ Features
