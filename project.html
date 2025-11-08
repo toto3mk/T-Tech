@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-Tech Software Solutions - Project Inquiry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+        }
+
+        .form-input {
+            @apply w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="text-2xl font-extrabold text-blue-600 tracking-wider">
+                T-Tech <span class="text-gray-900 font-medium text-xl">Solutions</span>
+            </div>
+            <nav class="hidden md:flex space-x-8 text-gray-600 font-medium">
+                <a href="./index.html" class="hover:text-blue-600 transition">Home</a>
+                <a href="#form-section" class="text-blue-600 font-bold">Start Project</a>
+                <a href="#" class="hover:text-blue-600 transition"
+                    onclick="alert('Services page coming soon!')">Services</a>
+                <a href="#" id="contact-link" class="hover:text-blue-600 transition">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <section class="bg-gray-800 text-white py-16 md:py-24 text-center">
+            <h1 class="text-4xl sm:text-5xl font-bold mb-4">Innovate Your Future with T-Tech</h1>
+            <p class="text-xl text-gray-300 mb-8">Custom software solutions for every challenge</p>
+            <a href="#form-section"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
+                Start Your Project Inquiry
+            </a>
+        </section>
+
+        <section id="form-section" class="max-w-7xl mx-auto p-6 md:p-10 my-12">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-2xl p-8 md:p-10">
+                    <h2 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-2">New Project Consultation</h2>
+                    <p class="text-gray-600 mb-8">Please provide the necessary details for your project</p>
+
+                    <div id="message-box" class="hidden p-4 mb-6 rounded-lg font-medium text-center" role="alert"></div>
+
+                    <form id="project-form" class="space-y-8">
+                        <fieldset class="space-y-6">
+                            <legend class="text-xl font-semibold text-gray-800 mb-4 pb-1 border-b">Step 1: Client
+                                Details</legend>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="clientName" class="block text-sm font-medium text-gray-700 mb-1">Client
+                                        Name <span class="text-red-500">*</span></label>
+                                    <input type="text" id="clientName" placeholder="Taha" class="form-input" required>
+                                </div>
+                                <div>
+                                    <label for="contactPerson"
+                                        class="block text-sm font-medium text-gray-700 mb-1">Contact Person <span
+                                            class="text-red-500">*</span></label>
+                                    <input type="text" id="contactPerson" placeholder="Fadhil" class="form-input"
+                                        required>
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email
+                                        Address <span class="text-red-500">*</span></label>
+                                    <input type="email" id="email" placeholder="test@example.com" class="form-input"
+                                        required>
+                                </div>
+                                <div>
+                                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number
+                                        <span class="text-red-500">*</span></label>
+                                    <input type="tel" id="phone" placeholder="07822719497" class="form-input" required>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="space-y-6">
+                            <legend class="text-xl font-semibold text-gray-800 mb-4 pb-1 border-b">Step 2: Project
+                                Details</legend>
+                            <div>
+                                <label for="projectName" class="block text-sm font-medium text-gray-700 mb-1">Project
+                                    Name <span class="text-red-500">*</span></label>
+                                <input type="text" id="projectName" placeholder="e.g., Mobile Inventory Management App"
+                                    class="form-input" required>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">Target Due
+                                        Date <span class="text-red-500">*</span></label>
+                                    <input type="date" id="dueDate" class="form-input" required>
+                                </div>
+                                <div>
+                                    <label for="budget" class="block text-sm font-medium text-gray-700 mb-1">Estimated
+                                        Budget (USD) <span class="text-red-500">*</span></label>
+                                    <input type="number" id="budget" placeholder="e.g., 50000" min="1"
+                                        class="form-input" required>
+                                </div>
+                                <div>
+                                    <label for="duration" class="block text-sm font-medium text-gray-700 mb-1">Project
+                                        Duration (Months)</label>
+                                    <input type="number" id="duration" placeholder="e.g., 3" min="1" class="form-input">
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <div class="pt-4">
+                            <button type="submit"
+                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition duration-200">
+                                Submit Inquiry
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-1">
+                    <div class="bg-gray-50 p-8 rounded-xl shadow-lg border border-gray-200 sticky top-28">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-5">What Happens Next?</h3>
+                        <ol class="relative border-l border-gray-300 space-y-6">
+                            <li class="ml-6">
+                                <span
+                                    class="absolute flex items-center justify-center w-6 h-6 bg-blue-200 rounded-full -left-3"><span
+                                        class="text-blue-800 font-bold text-sm">1</span></span>
+                                <h4 class="font-semibold text-gray-800">Submission</h4>
+                                <p class="text-sm text-gray-600">You send us your project details</p>
+                            </li>
+                            <li class="ml-6">
+                                <span
+                                    class="absolute flex items-center justify-center w-6 h-6 bg-blue-200 rounded-full -left-3"><span
+                                        class="text-blue-800 font-bold text-sm">2</span></span>
+                                <h4 class="font-semibold text-gray-800">Review</h4>
+                                <p class="text-sm text-gray-600">Our experts review your requirements</p>
+                            </li>
+                            <li class="ml-6">
+                                <span
+                                    class="absolute flex items-center justify-center w-6 h-6 bg-blue-200 rounded-full -left-3"><span
+                                        class="text-blue-800 font-bold text-sm">3</span></span>
+                                <h4 class="font-semibold text-gray-800">Proposal</h4>
+                                <p class="text-sm text-gray-600">We send you a detailed proposal & estimate</p>
+                            </li>
+                        </ol>
+                        <div class="mt-8 border-t pt-6">
+                            <p class="text-sm text-gray-600">
+                                Need to speak with us directly?
+                                <a href="#" id="contact-link-sidebar"
+                                    class="text-blue-600 font-medium hover:underline">Contact us now</a>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="contact-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50"
+        onclick="closeContactModal()">
+        <div class="relative p-5 border w-96 shadow-lg rounded-md bg-white" onclick="event.stopPropagation()">
+            <div class="mt-3 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
+                    <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4">Contact Us</h3>
+                <div class="mt-4 px-7 py-3">
+                    <p class="text-sm text-gray-500">For direct inquiries, please contact:</p>
+                    <p class="text-lg font-bold text-gray-800 mt-2">Taha Fadhil Abdullah</p>
+                    <a href="mailto:hohzjrawy@gmail.com"
+                        class="text-blue-600 hover:underline block mt-1">hohzjrawy@gmail.com</a>
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button id="ok-btn" onclick="closeContactModal()"
+                        class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-900 text-white py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p>&copy; <span id="currentYear"></span> T-Tech Software Solutions. All rights reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        const SERVER_ENDPOINT = "http://localhost:3000/api/project-submission";
+
+        // All other JavaScript from your file is correct
+        async function exponentialBackoffFetch(url, options, maxRetries = 3) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.status !== 429 && response.status < 500) return response;
+                } catch (error) { console.warn(`Fetch attempt ${i + 1} failed.`, error); }
+                if (i < maxRetries - 1) {
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+            throw new Error(`API request failed after ${maxRetries} attempts.`);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            const contactModal = document.getElementById('contact-modal');
+            const contactLink = document.getElementById('contact-link');
+            const contactLinkSidebar = document.getElementById('contact-link-sidebar');
+            function openContactModal(e) {
+                e.preventDefault();
+                contactModal.classList.remove('hidden');
+            }
+            window.closeContactModal = function () { contactModal.classList.add('hidden'); }
+            contactLink.addEventListener('click', openContactModal);
+            contactLinkSidebar.addEventListener('click', openContactModal);
+
+            const form = document.getElementById('project-form');
+            const messageBox = document.getElementById('message-box');
+
+            function showMessage(message, isError) {
+                messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
+                if (isError) {
+                    messageBox.classList.add('bg-red-100', 'text-red-700', 'border', 'border-red-400');
+                    messageBox.innerHTML = message;
+                } else {
+                    messageBox.classList.add('bg-green-100', 'text-green-700', 'border', 'border-green-400');
+                    messageBox.textContent = message;
+                }
+                messageBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                messageBox.classList.add('hidden');
+
+                let isValid = true;
+                const data = {};
+                let errors = [];
+
+                const getFieldValue = (id) => {
+                    const input = document.getElementById(id);
+                    if (!input) return '';
+                    const value = input.value.trim();
+                    if (input.hasAttribute('required') && value === '') {
+                        errors.push(`${input.previousElementSibling.textContent.replace(' *', '').trim()} is required.`);
+                        input.classList.add('border-red-500');
+                        isValid = false;
+                    } else { input.classList.remove('border-red-500'); }
+                    data[id] = value;
+                    return value;
+                };
+
+                getFieldValue('clientName');
+                getFieldValue('contactPerson');
+                const email = getFieldValue('email');
+                const phone = getFieldValue('phone');
+                getFieldValue('projectName');
+                const dueDate = getFieldValue('dueDate');
+                const budget = getFieldValue('budget');
+                getFieldValue('duration');
+
+                if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    errors.push('Please enter a valid email address.');
+                    document.getElementById('email').classList.add('border-red-500');
+                    isValid = false;
+                }
+
+                if (phone && !/^\+?[\d\s\(\)-]{7,15}$/.test(phone.replace(/\s/g, ''))) {
+                    errors.push('Please enter a valid phone number.');
+                    document.getElementById('phone').classList.add('border-red-500');
+                    isValid = false;
+                }
+
+                const budgetValue = parseFloat(budget);
+                if (budget && (isNaN(budgetValue) || budgetValue <= 0)) {
+                    errors.push('Budget must be a positive value.');
+                    document.getElementById('budget').classList.add('border-red-500');
+                    isValid = false;
+                } else if (budget) { data['budget'] = budgetValue; }
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const selectedDate = new Date(dueDate);
+                if (dueDate && selectedDate < today) {
+                    errors.push('Target Due Date cannot be in the past.');
+                    document.getElementById('dueDate').classList.add('border-red-500');
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    showMessage(`<ul class="list-disc list-inside">${errors.map(err => `<li>${err}</li>`).join('')}</ul>`, true);
+                    return;
+                }
+
+                const submitButton = e.submitter;
+                submitButton.disabled = true;
+                submitButton.textContent = 'Sending...';
+
+                try {
+                    const response = await exponentialBackoffFetch(SERVER_ENDPOINT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    }, 1);
+
+                    if (response.ok) {
+                        let serverMessage = 'Your inquiry has been sent.';
+                        try {
+                            const serverResult = await response.json();
+                            if (serverResult.message) serverMessage = serverResult.message;
+                        } catch (e) { /* ignore */ }
+                        showMessage(`Success! ${serverMessage}`, false);
+                        form.reset();
+                    } else {
+                        let errorDetails = `Error: ${response.status} ${response.statusText}`;
+                        try {
+                            const errorJson = await response.json();
+                            if (errorJson.message) errorDetails = errorJson.message;
+                        } catch (e) { /* ignore */ }
+                        throw new Error(`Server error: ${errorDetails}`);
+                    }
+                } catch (error) {
+                    showMessage(`Submission failed: ${error.message}`, true);
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Submit Inquiry';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

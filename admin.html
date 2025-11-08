@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-Tech Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+    <script>
+        // Security gate: If no token, redirect to login
+        if (!localStorage.getItem('adminAuthToken')) window.location.href = './login.html';
+    </script>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm sticky top-0 z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <span class="text-2xl font-extrabold text-blue-600">T-Tech <span
+                                class="text-gray-900 font-medium">Admin</span></span>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span id="admin-username" class="mr-4 text-sm text-gray-600 font-medium"></span>
+                    <button id="logout-button"
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <div id="projects-view" class="view-section">
+            <div class="sm:flex sm:items-center sm:justify-between mb-6">
+                <h1 class="text-2xl font-bold text-gray-900">Project Submissions</h1>
+                <div class="mt-4 sm:mt-0">
+                    <button onclick="fetchProjects()"
+                        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                        Refresh List
+                    </button>
+                </div>
+            </div>
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200" id="projects-table">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Project</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Client</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Budget & Due Date</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="projects-tbody">
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="edit-modal" class="fixed inset-0 bg-gray-500 bg-opacity-75 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Edit Project</h3>
+            <form id="edit-form" class="space-y-4">
+                <input type="hidden" id="edit-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-sm font-medium text-gray-700">Client Name</label><input type="text"
+                            id="edit-clientName" class="w-full p-2 border rounded mt-1"></div>
+                    <div><label class="text-sm font-medium text-gray-700">Contact Person</label><input type="text"
+                            id="edit-contactPerson" class="w-full p-2 border rounded mt-1"></div>
+                </div>
+                <div><label class="text-sm font-medium text-gray-700">Project Name</label><input type="text"
+                        id="edit-projectName" class="w-full p-2 border rounded mt-1"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-sm font-medium text-gray-700">Email</label><input type="email"
+                            id="edit-email" class="w-full p-2 border rounded mt-1"></div>
+                    <div><label class="text-sm font-medium text-gray-700">Phone</label><input type="text"
+                            id="edit-phone" class="w-full p-2 border rounded mt-1"></div>
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                    <div><label class="text-sm font-medium text-gray-700">Due Date</label><input type="date"
+                            id="edit-dueDate" class="w-full p-2 border rounded mt-1"></div>
+                    <div><label class="text-sm font-medium text-gray-700">Budget</label><input type="number"
+                            id="edit-budget" class="w-full p-2 border rounded mt-1"></div>
+                    <div><label class="text-sm font-medium text-gray-700">Duration</label><input type="number"
+                            id="edit-duration" class="w-full p-2 border rounded mt-1"></div>
+                </div>
+                <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+                    <button type="submit"
+                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 sm:col-start-2">Save</button>
+                    <button type="button" onclick="document.getElementById('edit-modal').classList.add('hidden')"
+                        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:col-start-1">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Global setup
+        const API_BASE = 'http://localhost:3000/api';
+        const token = localStorage.getItem('adminAuthToken');
+        const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+        let projectsCache = [];
+
+        // 1. Initialize Page
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('admin-username').textContent = `Logged in as: ${localStorage.getItem('adminUsername') || 'Admin'}`;
+
+            document.getElementById('logout-button').addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = './login.html';
+            });
+
+            fetchProjects(); // Load initial data
+        });
+
+        // PROJECT FUNCTIONS 
+        async function fetchProjects() {
+            const tbody = document.getElementById('projects-tbody');
+            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Loading...</td></tr>';
+            try {
+                const res = await fetch(`${API_BASE}/projects`, { headers });
+                if (!res.ok) throw new Error(res.status);
+                projectsCache = await res.json();
+                renderProjects(projectsCache);
+            } catch (e) {
+                if (e.message === '401' || e.message === '403') window.location.href = './login.html';
+                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error loading projects.</td></tr>`;
+            }
+        }
+
+        function renderProjects(data) {
+            const tbody = document.getElementById('projects-tbody');
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No projects found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = data.map(p => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <select onchange="updateStatus(${p.id}, this.value)" class="text-sm rounded-full px-3 py-1 font-semibold ${getStatusColor(p.status)} border-0 cursor-pointer focus:ring-2 focus:ring-blue-500">
+                            <option value="New" ${p.status === 'New' ? 'selected' : ''}>New</option>
+                            <option value="Reviewing" ${p.status === 'Reviewing' ? 'selected' : ''}>Reviewing</option>
+                            <option value="In Progress" ${p.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                            <option value="Completed" ${p.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                        </select>
+                    </td>
+                    <td class="px-6 py-4"><div class="text-sm font-medium text-gray-900">${p.projectName}</div></td>
+                    <td class="px-6 py-4"><div class="text-sm text-gray-900">${p.clientName}</div><div class="text-sm text-gray-500">${p.contactPerson}</div></td>
+                    <td class="px-6 py-4"><div class="text-sm text-gray-900">$${Number(p.budget).toLocaleString()}</div><div class="text-sm text-gray-500">Due: ${p.dueDate}</div></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="openEditModal(${p.id})" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
+                        <button onclick="deleteProject(${p.id})" class="text-red-600 hover:text-red-900">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'New': return 'bg-blue-100 text-blue-800';
+                case 'Reviewing': return 'bg-yellow-100 text-yellow-800';
+                case 'In Progress': return 'bg-purple-100 text-purple-800';
+                case 'Completed': return 'bg-green-100 text-green-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        async function updateStatus(id, newStatus) {
+            try {
+                const response = await fetch(`${API_BASE}/projects/${id}/status`, {
+                    method: 'PATCH',
+                    headers,
+                    body: JSON.stringify({ status: newStatus })
+                });
+                if (!response.ok) throw new Error('Server update failed');
+
+                // Update color immediately without full refresh
+                const selectElement = event.target;
+                selectElement.className = `text-sm rounded-full px-3 py-1 font-semibold ${getStatusColor(newStatus)} border-0 cursor-pointer focus:ring-2 focus:ring-blue-500`;
+            } catch (error) {
+                alert('Failed to update status. Please try again.');
+                fetchProjects(); // Re-fetch to undo visual change
+            }
+        }
+
+        async function deleteProject(id) {
+            if (!confirm('Are you sure you want to delete this project?')) return;
+            await fetch(`${API_BASE}/projects/${id}`, { method: 'DELETE', headers });
+            fetchProjects();
+        }
+
+
+        function openEditModal(id) {
+            const p = projectsCache.find(p => p.id === id);
+            document.getElementById('edit-id').value = p.id;
+            ['clientName', 'contactPerson', 'projectName', 'email', 'phone', 'budget', 'duration'].forEach(f => document.getElementById(`edit-${f}`).value = p[f] || '');
+            document.getElementById('edit-dueDate').value = p.dueDate ? p.dueDate.split('T')[0] : '';
+            document.getElementById('edit-modal').classList.remove('hidden');
+        }
+
+        document.getElementById('edit-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('edit-id').value;
+            const data = {};
+            ['clientName', 'contactPerson', 'projectName', 'email', 'phone', 'dueDate', 'budget', 'duration'].forEach(f => data[f] = document.getElementById(`edit-${f}`).value);
+
+            await fetch(`${API_BASE}/projects/${id}`, { method: 'PUT', headers, body: JSON.stringify(data) });
+            document.getElementById('edit-modal').classList.add('hidden');
+            fetchProjects();
+        });
+    </script>
+</body>
+
+</html>
