@@ -53,13 +53,23 @@ db.serialize(() => {
         db.get(`SELECT * FROM users WHERE username = 'admin'`, (err, row) => {
           if (!row) {
             bcrypt.hash("password123", 10, (err, hash) => {
+              if (err) {
+                console.error("Error hashing password:", err.message);
+                return;
+              }
               if (hash) {
                 db.run(
                   `INSERT INTO users (username, passwordHash) VALUES (?, ?)`,
-                  ["admin", hash]
-                );
-                console.log(
-                  "Default admin user 'admin' (password123) created."
+                  ["admin", hash],
+                  (insertErr) => {
+                    if (insertErr) {
+                      console.error("Error creating default admin:", insertErr.message);
+                    } else {
+                      console.log(
+                        "Default admin user 'admin' (password123) created."
+                      );
+                    }
+                  }
                 );
               }
             });
@@ -90,9 +100,7 @@ function authenticateToken(req, res, next) {
   });
 }
 
-// ==================
 //    PUBLIC ROUTES
-// ==================
 // Submit New Project
 app.post("/api/project-submission", (req, res) => {
   const data = req.body;
@@ -146,9 +154,7 @@ app.post("/api/login", (req, res) => {
   });
 });
 
-// ============================
 //   PROTECTED PROJECT ROUTES
-// ============================
 
 // GET all projects
 app.get("/api/projects", authenticateToken, (req, res) => {
@@ -173,13 +179,14 @@ app.delete("/api/projects/:id", authenticateToken, (req, res) => {
 // project details
 app.put("/api/projects/:id", authenticateToken, (req, res) => {
   const d = req.body;
-  const sql = `UPDATE inquiries SET clientName=?, contactPerson=?, email=?, phone=?, projectName=?, dueDate=?, budget=?, duration=? WHERE id=?`;
+  const sql = `UPDATE inquiries SET clientName=?, contactPerson=?, email=?, phone=?, projectName=?, projectDescription=?, dueDate=?, budget=?, duration=? WHERE id=?`;
   const params = [
     d.clientName,
     d.contactPerson,
     d.email,
     d.phone,
     d.projectName,
+    d.projectDescription || null,
     d.dueDate,
     d.budget,
     d.duration,
@@ -204,6 +211,31 @@ app.patch("/api/projects/:id/status", authenticateToken, (req, res) => {
       });
     }
   );
+});
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+  console.log('\nShutting down gracefully...');
+  db.close((err) => {
+    if (err) {
+      console.error('Error closing database:', err.message);
+    } else {
+      console.log('Database connection closed.');
+    }
+    process.exit(0);
+  });
+});
+
+process.on('SIGTERM', () => {
+  console.log('\nShutting down gracefully...');
+  db.close((err) => {
+    if (err) {
+      console.error('Error closing database:', err.message);
+    } else {
+      console.log('Database connection closed.');
+    }
+    process.exit(0);
+  });
 });
 
 // Start Server

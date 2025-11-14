@@ -4,54 +4,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Submit your project inquiry to T-Tech Solutions. Get a custom quote for your software development needs">
+    <meta name="keywords" content="project inquiry, software quote, custom development, project consultation">
     <title>T-Tech Software Solutions - Project Inquiry</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f7f7f7;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 50%, #f3f4f6 100%);
+            background-size: 200% 200%;
+            animation: subtleGradient 20s ease infinite;
+        }
+
+        @keyframes subtleGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .form-input {
-            @apply w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150;
+            @apply w-full p-4 border-2 border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all duration-300 bg-gray-50;
+        }
+
+        .form-input:focus {
+            box-shadow: 0 0 0 4px rgba(107, 114, 128, 0.1), 0 4px 12px rgba(107, 114, 128, 0.15);
+            background-color: white;
+            transform: translateY(-2px);
         }
     </style>
 </head>
 
 <body class="min-h-screen flex flex-col">
 
-    <header class="bg-white shadow-md sticky top-0 z-10">
+    <header class="bg-white/95 backdrop-blur-lg shadow-lg sticky top-0 z-10 border-b border-gray-200/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <div class="text-2xl font-extrabold text-blue-600 tracking-wider">
+            <div class="text-2xl font-extrabold bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent tracking-wider flex items-center gap-2">
+                <div class="p-1.5 bg-gradient-to-br from-gray-700 to-black rounded-lg">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
+                </div>
                 T-Tech <span class="text-gray-900 font-medium text-xl">Solutions</span>
             </div>
             <nav class="hidden md:flex space-x-8 text-gray-600 font-medium">
-                <a href="./index.html" class="hover:text-blue-600 transition">Home</a>
-                <a href="#form-section" class="text-blue-600 font-bold">Start Project</a>
-                <a href="#" class="hover:text-blue-600 transition"
-                    onclick="alert('Services page coming soon!')">Services</a>
-                <a href="#" id="contact-link" class="hover:text-blue-600 transition">Contact</a>
+                <a href="./index.html" class="hover:text-gray-900 transition">Home</a>
+                <a href="#form-section" class="text-gray-900 font-bold">Start Project</a>
+                <a href="#" id="services-link" class="hover:text-gray-900 transition">Services</a>
+                <a href="#" id="contact-link" class="hover:text-gray-900 transition">Contact</a>
             </nav>
         </div>
     </header>
 
     <main class="flex-grow">
-        <section class="bg-gray-800 text-white py-16 md:py-24 text-center">
-            <h1 class="text-4xl sm:text-5xl font-bold mb-4">Innovate Your Future with T-Tech</h1>
-            <p class="text-xl text-gray-300 mb-8">Custom software solutions for every challenge</p>
-            <a href="#form-section"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
-                Start Your Project Inquiry
-            </a>
+        <section class="bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white py-20 md:py-28 text-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-gray-600/20 via-gray-800/20 to-gray-600/20 animate-pulse"></div>
+            <div class="relative z-10">
+                <h1 class="text-5xl sm:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-gray-300 to-gray-400 bg-clip-text text-transparent drop-shadow-lg">Innovate Your Future with T-Tech</h1>
+                <p class="text-xl text-gray-300 mb-10 font-medium">Custom software solutions for every challenge</p>
+                <a href="#form-section"
+                    class="inline-block bg-gradient-to-r from-gray-800 to-black hover:from-gray-900 hover:to-black text-white font-bold py-4 px-10 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 hover:shadow-gray-500/50">
+                    Start Your Project Inquiry →
+                </a>
+            </div>
         </section>
 
         <section id="form-section" class="max-w-7xl mx-auto p-6 md:p-10 my-12">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
-                <div class="lg:col-span-2 bg-white rounded-xl shadow-2xl p-8 md:p-10">
-                    <h2 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-2">New Project Consultation</h2>
+                <div class="lg:col-span-2 bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl p-8 md:p-10 border border-gray-200/50">
+                    <h2 class="text-3xl font-extrabold bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent mb-6 border-b-2 border-gray-200 pb-3">New Project Consultation</h2>
                     <p class="text-gray-600 mb-8">Please provide the necessary details for your project</p>
 
                     <div id="message-box" class="hidden p-4 mb-6 rounded-lg font-medium text-center" role="alert"></div>
@@ -118,35 +142,35 @@
 
                         <div class="pt-4">
                             <button type="submit"
-                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition duration-200">
-                                Submit Inquiry
+                                class="w-full bg-gradient-to-r from-gray-800 to-black hover:from-gray-900 hover:to-black text-white font-bold py-4 rounded-xl shadow-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                                Submit Inquiry →
                             </button>
                         </div>
                     </form>
                 </div>
 
                 <div class="lg:col-span-1">
-                    <div class="bg-gray-50 p-8 rounded-xl shadow-lg border border-gray-200 sticky top-28">
+                    <div class="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 p-8 rounded-2xl shadow-xl border-2 border-gray-200 sticky top-28 backdrop-blur-lg">
                         <h3 class="text-2xl font-bold text-gray-900 mb-5">What Happens Next?</h3>
                         <ol class="relative border-l border-gray-300 space-y-6">
                             <li class="ml-6">
                                 <span
-                                    class="absolute flex items-center justify-center w-6 h-6 bg-blue-200 rounded-full -left-3"><span
-                                        class="text-blue-800 font-bold text-sm">1</span></span>
+                                    class="absolute flex items-center justify-center w-6 h-6 bg-gray-300 rounded-full -left-3"><span
+                                        class="text-gray-800 font-bold text-sm">1</span></span>
                                 <h4 class="font-semibold text-gray-800">Submission</h4>
                                 <p class="text-sm text-gray-600">You send us your project details</p>
                             </li>
                             <li class="ml-6">
                                 <span
-                                    class="absolute flex items-center justify-center w-6 h-6 bg-blue-200 rounded-full -left-3"><span
-                                        class="text-blue-800 font-bold text-sm">2</span></span>
+                                    class="absolute flex items-center justify-center w-6 h-6 bg-gray-300 rounded-full -left-3"><span
+                                        class="text-gray-800 font-bold text-sm">2</span></span>
                                 <h4 class="font-semibold text-gray-800">Review</h4>
                                 <p class="text-sm text-gray-600">Our experts review your requirements</p>
                             </li>
                             <li class="ml-6">
                                 <span
-                                    class="absolute flex items-center justify-center w-6 h-6 bg-blue-200 rounded-full -left-3"><span
-                                        class="text-blue-800 font-bold text-sm">3</span></span>
+                                    class="absolute flex items-center justify-center w-6 h-6 bg-gray-300 rounded-full -left-3"><span
+                                        class="text-gray-800 font-bold text-sm">3</span></span>
                                 <h4 class="font-semibold text-gray-800">Proposal</h4>
                                 <p class="text-sm text-gray-600">We send you a detailed proposal & estimate</p>
                             </li>
@@ -155,7 +179,7 @@
                             <p class="text-sm text-gray-600">
                                 Need to speak with us directly?
                                 <a href="#" id="contact-link-sidebar"
-                                    class="text-blue-600 font-medium hover:underline">Contact us now</a>.
+                                    class="text-gray-900 font-medium hover:underline">Contact us now</a>.
                             </p>
                         </div>
                     </div>
@@ -164,12 +188,11 @@
         </section>
     </main>
 
-    <div id="contact-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50"
-        onclick="closeContactModal()">
-        <div class="relative p-5 border w-96 shadow-lg rounded-md bg-white" onclick="event.stopPropagation()">
+    <div id="contact-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50">
+        <div id="contact-modal-content" class="relative p-6 border-2 border-gray-200/50 w-96 shadow-2xl rounded-2xl bg-white/95 backdrop-blur-xl">
             <div class="mt-3 text-center">
-                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
-                    <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-gray-200">
+                    <svg class="h-6 w-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
                         </path>
@@ -180,11 +203,11 @@
                     <p class="text-sm text-gray-500">For direct inquiries, please contact:</p>
                     <p class="text-lg font-bold text-gray-800 mt-2">Taha Fadhil Abdullah</p>
                     <a href="mailto:hohzjrawy@gmail.com"
-                        class="text-blue-600 hover:underline block mt-1">hohzjrawy@gmail.com</a>
+                        class="text-gray-900 hover:underline block mt-1">hohzjrawy@gmail.com</a>
                 </div>
                 <div class="items-center px-4 py-3">
-                    <button id="ok-btn" onclick="closeContactModal()"
-                        class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700">
+                    <button id="ok-btn"
+                        class="px-4 py-2 bg-gray-800 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-black">
                         Close
                     </button>
                 </div>
@@ -199,7 +222,9 @@
     </footer>
 
     <script>
-        const SERVER_ENDPOINT = "http://localhost:3000/api/project-submission";
+        // API configuration - can be overridden by environment
+        const API_BASE = window.API_BASE_URL || 'http://localhost:3000/api';
+        const SERVER_ENDPOINT = `${API_BASE}/project-submission`;
 
         // All other JavaScript from your file is correct
         async function exponentialBackoffFetch(url, options, maxRetries = 3) {
@@ -220,18 +245,57 @@
             document.getElementById('currentYear').textContent = new Date().getFullYear();
 
             const contactModal = document.getElementById('contact-modal');
+            const contactModalContent = document.getElementById('contact-modal-content');
             const contactLink = document.getElementById('contact-link');
             const contactLinkSidebar = document.getElementById('contact-link-sidebar');
+            const servicesLink = document.getElementById('services-link');
+            const okBtn = document.getElementById('ok-btn');
+
             function openContactModal(e) {
                 e.preventDefault();
                 contactModal.classList.remove('hidden');
             }
-            window.closeContactModal = function () { contactModal.classList.add('hidden'); }
+
+            function closeContactModal() {
+                contactModal.classList.add('hidden');
+            }
+
+            // Contact modal event listeners
             contactLink.addEventListener('click', openContactModal);
             contactLinkSidebar.addEventListener('click', openContactModal);
+            okBtn.addEventListener('click', closeContactModal);
+
+            // Close modal when clicking on overlay (but not on content)
+            contactModal.addEventListener('click', (e) => {
+                if (e.target === contactModal) {
+                    closeContactModal();
+                }
+            });
+
+            // Prevent modal from closing when clicking inside content
+            contactModalContent.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            // Services link
+            servicesLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('Services page coming soon!');
+            });
 
             const form = document.getElementById('project-form');
             const messageBox = document.getElementById('message-box');
+            
+            // Add character counter for project description if field exists
+            const projectDescriptionField = document.getElementById('projectDescription');
+            if (projectDescriptionField) {
+                const counter = document.getElementById('description-count');
+                if (counter) {
+                    projectDescriptionField.addEventListener('input', () => {
+                        counter.textContent = projectDescriptionField.value.length;
+                    });
+                }
+            }
 
             function showMessage(message, isError) {
                 messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
@@ -315,9 +379,12 @@
                 try {
                     const response = await exponentialBackoffFetch(SERVER_ENDPOINT, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
                         body: JSON.stringify(data)
-                    }, 1);
+                    }, 3);
 
                     if (response.ok) {
                         let serverMessage = 'Your inquiry has been sent.';
@@ -336,7 +403,13 @@
                         throw new Error(`Server error: ${errorDetails}`);
                     }
                 } catch (error) {
-                    showMessage(`Submission failed: ${error.message}`, true);
+                    let errorMessage = 'Submission failed. Please try again.';
+                    if (error.message.includes('fetch')) {
+                        errorMessage = 'Unable to connect to server. Please check your internet connection and try again.';
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+                    showMessage(errorMessage, true);
                 } finally {
                     submitButton.disabled = false;
                     submitButton.textContent = 'Submit Inquiry';

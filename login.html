@@ -4,70 +4,354 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="T-Tech Solutions Admin Portal - Secure login for administrators">
+    <meta name="robots" content="noindex, nofollow">
     <title>T-Tech Admin Login</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f7f7f7;
+            background: linear-gradient(135deg, #1f2937 0%, #111827 50%, #000000 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 10s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .form-input {
-            @apply w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150;
+            @apply w-full p-4 pr-12 border-2 border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all duration-300 outline-none bg-gray-50;
+        }
+
+        .form-input:focus {
+            box-shadow: 0 0 0 4px rgba(107, 114, 128, 0.1), 0 4px 12px rgba(107, 114, 128, 0.15);
+            background-color: white;
+            transform: translateY(-2px);
+        }
+
+        .password-toggle {
+            @apply absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer transition-colors;
+        }
+
+        .spinner {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .animate-shimmer {
+            animation: shimmer 3s infinite;
+        }
+
+        .input-focus {
+            transition: all 0.3s ease;
+        }
+
+        .input-focus:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(107, 114, 128, 0.2);
         }
     </style>
 </head>
 
-<body class="min-h-screen flex items-center justify-center bg-gray-100">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <main class="max-w-md w-full mx-auto p-8 my-12 bg-white rounded-xl shadow-2xl">
-        <div class="text-center mb-8">
-            <div class="text-3xl font-extrabold text-blue-600 tracking-wider">
-                T-Tech <span class="text-gray-900 font-medium text-2xl">Solutions</span>
+    <main class="max-w-md w-full mx-auto bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden fade-in border border-white/20">
+        <!-- Header Section -->
+        <div class="bg-gradient-to-br from-gray-800 to-black px-8 py-12 text-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
+            <div class="relative z-10">
+                <div class="text-4xl font-extrabold text-white tracking-wider mb-3 drop-shadow-lg">
+                    T-Tech <span class="font-medium text-3xl">Solutions</span>
+                </div>
+                <h1 class="text-xl font-semibold text-gray-300 mt-2">Admin Portal</h1>
             </div>
-            <h2 class="mt-4 text-2xl font-bold text-gray-900">Admin Portal Login</h2>
         </div>
 
-        <div id="message-box" class="hidden p-4 mb-6 rounded-lg font-medium text-center text-sm" role="alert"></div>
-
-        <form id="login-form" class="space-y-6">
-            <div>
-                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-                <input type="text" id="username" class="form-input" required>
+         <!-- Form Section -->
+        <div class="px-8 py-8">
+            <div id="message-box" class="hidden p-4 mb-6 rounded-lg font-medium text-center text-sm flex items-center justify-center gap-2" role="alert">
+                <span id="message-icon"></span>
+                <span id="message-text"></span>
             </div>
 
-            <div>
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                <input type="password" id="password" class="form-input" required>
-            </div>
+            <form id="login-form" class="space-y-5" novalidate>
+                <div>
+                    <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Username
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username"
+                            class="form-input" 
+                            placeholder="Enter your username"
+                            autocomplete="username"
+                            required
+                            aria-required="true"
+                            aria-describedby="username-error"
+                        >
+                        <div id="username-error" class="hidden text-red-600 text-xs mt-1" role="alert"></div>
+                    </div>
+                </div>
 
-            <div>
-                <button type="submit"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50">
-                    Sign In
-                </button>
+                <div>
+                    <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Password
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password"
+                            class="form-input" 
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                            aria-required="true"
+                            aria-describedby="password-error"
+                        >
+                        <button 
+                            type="button" 
+                            id="toggle-password" 
+                            class="password-toggle"
+                            aria-label="Toggle password visibility"
+                            tabindex="0"
+                        >
+                            <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            <svg id="eye-off-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                            </svg>
+                        </button>
+                        <div id="password-error" class="hidden text-red-600 text-xs mt-1" role="alert"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            id="remember-me" 
+                            class="w-4 h-4 text-gray-700 border-gray-300 rounded focus:ring-gray-500"
+                        >
+                        <span class="ml-2 text-gray-600">Remember me</span>
+                    </label>
+                </div>
+
+                <div>
+                    <button 
+                        type="submit" 
+                        id="submit-button"
+                        class="w-full bg-gradient-to-r from-gray-800 to-black hover:from-gray-900 hover:to-black text-white font-semibold py-4 px-6 rounded-xl shadow-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transform hover:scale-105 hover:shadow-2xl"
+                    >
+                        <span id="button-text">Sign In</span>
+                        <div id="button-spinner" class="spinner hidden"></div>
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-6 text-center">
+                <a href="./index.html" class="text-sm text-gray-600 hover:text-gray-900 transition-colors inline-flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to home
+                </a>
             </div>
-        </form>
+        </div>
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('login-form');
             const messageBox = document.getElementById('message-box');
+            const messageText = document.getElementById('message-text');
+            const messageIcon = document.getElementById('message-icon');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const togglePasswordBtn = document.getElementById('toggle-password');
+            const eyeIcon = document.getElementById('eye-icon');
+            const eyeOffIcon = document.getElementById('eye-off-icon');
+            const submitButton = document.getElementById('submit-button');
+            const buttonText = document.getElementById('button-text');
+            const buttonSpinner = document.getElementById('button-spinner');
+            const rememberMeCheckbox = document.getElementById('remember-me');
 
-            // This URL must match your server.js file
-            const LOGIN_API_ENDPOINT = "http://localhost:3000/api/login";
+            // API configuration - can be overridden by environment
+            const API_BASE = window.API_BASE_URL || 'http://localhost:3000/api';
+            const LOGIN_API_ENDPOINT = `${API_BASE}/login`;
 
+            // Password visibility toggle
+            togglePasswordBtn.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                eyeIcon.classList.toggle('hidden');
+                eyeOffIcon.classList.toggle('hidden');
+            });
+
+            // Enter key support for password toggle
+            togglePasswordBtn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    togglePasswordBtn.click();
+                }
+            });
+
+            // Form validation
+            function validateForm() {
+                let isValid = true;
+                const usernameError = document.getElementById('username-error');
+                const passwordError = document.getElementById('password-error');
+
+                // Clear previous errors
+                usernameError.classList.add('hidden');
+                passwordError.classList.add('hidden');
+                usernameInput.classList.remove('border-red-500');
+                passwordInput.classList.remove('border-red-500');
+
+                // Validate username
+                if (!usernameInput.value.trim()) {
+                    usernameError.textContent = 'Username is required';
+                    usernameError.classList.remove('hidden');
+                    usernameInput.classList.add('border-red-500');
+                    isValid = false;
+                }
+
+                // Validate password
+                if (!passwordInput.value) {
+                    passwordError.textContent = 'Password is required';
+                    passwordError.classList.remove('hidden');
+                    passwordInput.classList.add('border-red-500');
+                    isValid = false;
+                } else if (passwordInput.value.length < 3) {
+                    passwordError.textContent = 'Password must be at least 3 characters';
+                    passwordError.classList.remove('hidden');
+                    passwordInput.classList.add('border-red-500');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            // Real-time validation
+            usernameInput.addEventListener('blur', () => {
+                if (usernameInput.value.trim()) {
+                    usernameInput.classList.remove('border-red-500');
+                    document.getElementById('username-error').classList.add('hidden');
+                }
+            });
+
+            passwordInput.addEventListener('blur', () => {
+                if (passwordInput.value && passwordInput.value.length >= 3) {
+                    passwordInput.classList.remove('border-red-500');
+                    document.getElementById('password-error').classList.add('hidden');
+                }
+            });
+
+            // Show message function
+            function showMessage(message, isError = false, isSuccess = false) {
+                messageBox.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'bg-green-50', 'text-green-700', 'bg-blue-50', 'text-blue-700', 'shake');
+                
+                // Reset icon
+                messageIcon.innerHTML = '';
+
+                if (isError) {
+                    messageBox.classList.add('bg-red-50', 'text-red-700');
+                    messageIcon.innerHTML = `
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                        </svg>
+                    `;
+                    messageBox.classList.add('shake');
+                } else if (isSuccess) {
+                    messageBox.classList.add('bg-green-50', 'text-green-700');
+                    messageIcon.innerHTML = `
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                    `;
+                } else {
+                    messageBox.classList.add('bg-gray-50', 'text-gray-700');
+                    messageIcon.innerHTML = `
+                        <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    `;
+                }
+
+                messageText.textContent = message;
+            }
+
+            // Set loading state
+            function setLoading(isLoading) {
+                submitButton.disabled = isLoading;
+                if (isLoading) {
+                    buttonText.classList.add('hidden');
+                    buttonSpinner.classList.remove('hidden');
+                } else {
+                    buttonText.classList.remove('hidden');
+                    buttonSpinner.classList.add('hidden');
+                }
+            }
+
+            // Form submission
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                const submitButton = e.submitter;
 
-                showMessage('Attempting login...', false);
-                submitButton.disabled = true;
+                if (!validateForm()) {
+                    showMessage('Please fix the errors above', true);
+                    return;
+                }
+
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
+                const rememberMe = rememberMeCheckbox.checked;
+
+                showMessage('Signing in...', false);
+                setLoading(true);
 
                 try {
                     const response = await fetch(LOGIN_API_ENDPOINT, {
@@ -80,35 +364,65 @@
                         const data = await response.json();
 
                         // Store the token
-                        localStorage.setItem('adminAuthToken', data.token);
+                        if (rememberMe) {
+                            localStorage.setItem('adminAuthToken', data.token);
+                            localStorage.setItem('adminUsername', data.username);
+                        } else {
+                            sessionStorage.setItem('adminAuthToken', data.token);
+                            sessionStorage.setItem('adminUsername', data.username);
+                        }
 
+                        showMessage('Login successful! Redirecting...', false, true);
 
-                        // It saves the username to be displayed on the admin page
-                        localStorage.setItem('adminUsername', data.username);
-
-                        // Redirect to the admin panel
-                        window.location.href = './admin.html';
+                        // Redirect after a brief delay
+                        setTimeout(() => {
+                            window.location.href = './admin.html';
+                        }, 500);
                     } else {
-                        const errorData = await response.json();
+                        const errorData = await response.json().catch(() => ({ message: 'Invalid username or password.' }));
                         showMessage(errorData.message || 'Invalid username or password.', true);
+                        setLoading(false);
                     }
 
                 } catch (error) {
                     console.error('Login failed:', error);
-                    showMessage('Login failed due to a network or server error.', true);
-                } finally {
-                    submitButton.disabled = false;
+                    let errorMessage = 'Unable to connect to server. Please check your connection.';
+                    if (error.message && error.message.includes('fetch')) {
+                        errorMessage = 'Network error. Please check your internet connection and try again.';
+                    }
+                    showMessage(errorMessage, true);
+                    setLoading(false);
                 }
             });
 
-            function showMessage(message, isError) {
-                messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
-                if (isError) {
-                    messageBox.classList.add('bg-red-100', 'text-red-700');
-                } else {
-                    messageBox.classList.add('bg-green-100', 'text-green-700');
-                }
-                messageBox.textContent = message;
+            // Check if already logged in and validate token
+            const existingToken = localStorage.getItem('adminAuthToken') || sessionStorage.getItem('adminAuthToken');
+            if (existingToken) {
+                // Validate token before redirecting
+                fetch(`${API_BASE}/projects`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${existingToken}`
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showMessage('You are already logged in. Redirecting...', false, true);
+                        setTimeout(() => {
+                            window.location.href = './admin.html';
+                        }, 1000);
+                    } else {
+                        // Token is invalid, clear it
+                        localStorage.removeItem('adminAuthToken');
+                        sessionStorage.removeItem('adminAuthToken');
+                        localStorage.removeItem('adminUsername');
+                        sessionStorage.removeItem('adminUsername');
+                    }
+                })
+                .catch(() => {
+                    // Network error - don't redirect, let user login
+                });
             }
         });
     </script>
