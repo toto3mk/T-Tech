@@ -4,28 +4,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="T-Tech Solutions Admin Dashboard - Manage Project Submissions">
     <title>T-Tech Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-        * {
-            box-sizing: border-box;
-        }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
         }
 
+        /* Toast Notification Styles */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .toast.error {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .toast.info {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        /* Loading Spinner */
         .spinner {
-            border: 2px solid rgba(59, 130, 246, 0.2);
-            border-top: 2px solid #3b82f6;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 0.8s linear infinite;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
             display: inline-block;
         }
 
@@ -34,311 +69,282 @@
             100% { transform: rotate(360deg); }
         }
 
-        .fade-in {
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .slide-in {
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .toast {
-            animation: toastSlide 0.3s ease-out;
-        }
-
-        @keyframes toastSlide {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .table-row {
-            transition: background-color 0.15s ease;
-        }
-
-        .table-row:hover {
-            background-color: #f9fafb;
-        }
-
-        @media (max-width: 640px) {
-            .table-container {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
+        /* Smooth transitions */
+        .transition-all {
+            transition: all 0.2s ease-in-out;
         }
     </style>
     <script>
         // Security gate: If no token, redirect to login
-        if (!localStorage.getItem('adminAuthToken')) {
-            window.location.href = './login.html';
-        }
+        if (!localStorage.getItem('adminAuthToken')) window.location.href = './login.html';
     </script>
 </head>
 
 <body class="min-h-screen flex flex-col">
 
-    <header class="bg-white shadow-sm sticky top-0 z-20 border-b border-gray-200">
+    <header class="bg-white shadow-sm sticky top-0 z-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
                         <span class="text-2xl font-extrabold text-blue-600">T-Tech <span
                                 class="text-gray-900 font-medium">Admin</span></span>
                     </div>
                 </div>
-                <div class="flex items-center gap-4">
-                    <div class="hidden sm:flex items-center gap-2 text-sm text-gray-600">
-                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                        <span id="admin-username" class="font-medium"></span>
-                    </div>
+                <div class="flex items-center">
+                    <span id="admin-username" class="mr-4 text-sm text-gray-600 font-medium"></span>
                     <button id="logout-button"
-                        class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                        </svg>
-                        Logout
-                    </button>
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition">Logout</button>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed top-4 right-4 z-50 hidden">
-        <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-4 max-w-sm toast">
-            <div class="flex items-start">
-                <div id="toast-icon" class="flex-shrink-0"></div>
-                <div class="ml-3 flex-1">
-                    <p id="toast-message" class="text-sm font-medium text-gray-900"></p>
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Projects</p>
+                        <p class="text-3xl font-bold text-gray-900" id="stat-total">0</p>
+                    </div>
+                    <div class="bg-blue-100 rounded-full p-3">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
                 </div>
-                <button onclick="hideToast()" class="ml-4 flex-shrink-0 text-gray-400 hover:text-gray-500">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-yellow-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">New</p>
+                        <p class="text-3xl font-bold text-gray-900" id="stat-new">0</p>
+                    </div>
+                    <div class="bg-yellow-100 rounded-full p-3">
+                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-purple-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">In Progress</p>
+                        <p class="text-3xl font-bold text-gray-900" id="stat-progress">0</p>
+                    </div>
+                    <div class="bg-purple-100 rounded-full p-3">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Completed</p>
+                        <p class="text-3xl font-bold text-gray-900" id="stat-completed">0</p>
+                    </div>
+                    <div class="bg-green-100 rounded-full p-3">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-        <div id="projects-view" class="view-section fade-in">
-            <!-- Header Section -->
-            <div class="sm:flex sm:items-center sm:justify-between mb-6">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Project Submissions</h1>
-                    <p class="mt-1 text-sm text-gray-500">Manage and track all project submissions</p>
+        <div id="projects-view" class="view-section">
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                <div class="sm:flex sm:items-center sm:justify-between mb-6">
+                    <h1 class="text-2xl font-bold text-gray-900">Project Submissions</h1>
+                    <div class="mt-4 sm:mt-0 flex gap-3">
+                        <button onclick="fetchProjects()" id="refresh-btn"
+                            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            Refresh
+                        </button>
+                    </div>
                 </div>
-                <div class="mt-4 sm:mt-0">
-                    <button id="refresh-button" onclick="fetchProjects()"
-                        class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                        <svg id="refresh-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+
+                <!-- Search and Filter Bar -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="Search projects, clients..."
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                        <span id="refresh-text">Refresh</span>
-                    </button>
+                    </div>
+                    <select id="status-filter" class="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">All Statuses</option>
+                        <option value="New">New</option>
+                        <option value="Reviewing">Reviewing</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                    <select id="sort-select" class="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="budget-high">Budget: High to Low</option>
+                        <option value="budget-low">Budget: Low to High</option>
+                        <option value="name">Project Name A-Z</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0 bg-blue-100 rounded-lg p-3">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-500">Total Projects</p>
-                            <p id="stat-total" class="text-2xl font-bold text-gray-900">-</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0 bg-yellow-100 rounded-lg p-3">
-                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-500">In Review</p>
-                            <p id="stat-reviewing" class="text-2xl font-bold text-gray-900">-</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0 bg-purple-100 rounded-lg p-3">
-                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-500">In Progress</p>
-                            <p id="stat-progress" class="text-2xl font-bold text-gray-900">-</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
-                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-500">Completed</p>
-                            <p id="stat-completed" class="text-2xl font-bold text-gray-900">-</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Projects Table -->
-            <div class="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200 table-container">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200" id="projects-table">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                    Status
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                    Project
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                    Client
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                    Budget & Due Date
-                                </th>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                    Actions
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200" id="projects-tbody">
-                            <tr>
-                                <td colspan="5" class="px-6 py-12 text-center">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <div class="spinner mb-2"></div>
-                                        <p class="text-sm text-gray-500">Loading projects...</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200" id="projects-table">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Project</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Client</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Budget & Due Date</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="projects-tbody">
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                <div class="flex items-center justify-center">
+                                    <div class="spinner mr-3"></div>
+                                    Loading...
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
 
-    <!-- Edit Modal -->
-    <div id="edit-modal" class="fixed inset-0 bg-gray-500 bg-opacity-75 hidden flex items-center justify-center z-50 p-4" onclick="closeModalOnBackdrop(event)">
-        <div class="bg-white rounded-xl overflow-hidden shadow-2xl transform transition-all sm:max-w-2xl w-full max-h-[90vh] overflow-y-auto slide-in" onclick="event.stopPropagation()">
-            <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-                <h3 class="text-xl font-bold text-gray-900">Edit Project</h3>
-                <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-500 focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
+    <!-- Project Details Modal -->
+    <div id="details-modal" class="fixed inset-0 bg-gray-500 bg-opacity-75 hidden flex items-center justify-center z-50 p-4"
+        onclick="closeDetailsModal()">
+        <div class="bg-white rounded-lg shadow-xl transform transition-all max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onclick="event.stopPropagation()">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-900">Project Details</h3>
+                    <button onclick="closeDetailsModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="details-content" class="space-y-4">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
             </div>
-            <form id="edit-form" class="p-6 space-y-5" novalidate>
-                <input type="hidden" id="edit-id">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label for="edit-clientName" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Client Name <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="edit-clientName" required
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none"
-                            placeholder="Enter client name">
-                    </div>
-                    <div>
-                        <label for="edit-contactPerson" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Contact Person
-                        </label>
-                        <input type="text" id="edit-contactPerson"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none"
-                            placeholder="Enter contact person">
-                    </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="fixed inset-0 bg-gray-500 bg-opacity-75 hidden flex items-center justify-center z-50 p-4"
+        onclick="closeEditModal()">
+        <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onclick="event.stopPropagation()">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-900">Edit Project</h3>
+                    <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
                 </div>
-                <div>
-                    <label for="edit-projectName" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Project Name <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" id="edit-projectName" required
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none"
-                        placeholder="Enter project name">
+                <form id="edit-form" class="space-y-4">
+                    <input type="hidden" id="edit-id">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Client Name <span class="text-red-500">*</span></label>
+                            <input type="text" id="edit-clientName" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Contact Person <span class="text-red-500">*</span></label>
+                            <input type="text" id="edit-contactPerson" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Project Name <span class="text-red-500">*</span></label>
+                        <input type="text" id="edit-projectName" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-500">*</span></label>
+                            <input type="email" id="edit-email" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Phone <span class="text-red-500">*</span></label>
+                            <input type="text" id="edit-phone" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Due Date <span class="text-red-500">*</span></label>
+                            <input type="date" id="edit-dueDate" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Budget (USD) <span class="text-red-500">*</span></label>
+                            <input type="number" id="edit-budget" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Duration (Months)</label>
+                            <input type="number" id="edit-duration" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                    <div class="mt-6 flex gap-3 justify-end">
+                        <button type="button" onclick="closeEditModal()"
+                            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit" id="save-btn"
+                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="fixed inset-0 bg-gray-500 bg-opacity-75 hidden flex items-center justify-center z-50"
+        onclick="closeConfirmModal()">
+        <div class="bg-white rounded-lg shadow-xl transform transition-all sm:max-w-md w-full p-6" onclick="event.stopPropagation()">
+            <div class="flex items-center mb-4">
+                <div class="flex-shrink-0 mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                    <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label for="edit-email" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Email
-                        </label>
-                        <input type="email" id="edit-email"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none"
-                            placeholder="client@example.com">
-                    </div>
-                    <div>
-                        <label for="edit-phone" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Phone
-                        </label>
-                        <input type="tel" id="edit-phone"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none"
-                            placeholder="+1 (555) 000-0000">
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                        <label for="edit-dueDate" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Due Date
-                        </label>
-                        <input type="date" id="edit-dueDate"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none">
-                    </div>
-                    <div>
-                        <label for="edit-budget" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Budget ($)
-                        </label>
-                        <input type="number" id="edit-budget" min="0" step="0.01"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none"
-                            placeholder="0.00">
-                    </div>
-                    <div>
-                        <label for="edit-duration" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Duration (days)
-                        </label>
-                        <input type="number" id="edit-duration" min="1"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none"
-                            placeholder="0">
-                    </div>
-                </div>
-                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t border-gray-200">
-                    <button type="button" onclick="closeEditModal()"
-                        class="w-full sm:w-auto inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-6 py-3 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition">
+            </div>
+            <div class="text-center">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Confirm Deletion</h3>
+                <p class="text-sm text-gray-500 mb-6">Are you sure you want to delete this project? This action cannot be undone.</p>
+                <div class="flex gap-3 justify-center">
+                    <button onclick="closeConfirmModal()"
+                        class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                         Cancel
                     </button>
-                    <button type="submit" id="save-button"
-                        class="w-full sm:w-auto inline-flex justify-center items-center gap-2 rounded-lg border border-transparent shadow-sm px-6 py-3 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                        <span id="save-text">Save Changes</span>
-                        <div id="save-spinner" class="spinner hidden"></div>
+                    <button id="confirm-delete-btn"
+                        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700">
+                        Delete
                     </button>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 
@@ -348,8 +354,30 @@
         const token = localStorage.getItem('adminAuthToken');
         const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
         let projectsCache = [];
+        let filteredProjects = [];
+        let deleteProjectId = null;
 
-        // 1. Initialize Page
+        // Toast Notification System
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Format date for display
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        // Initialize Page
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('admin-username').textContent = `Logged in as: ${localStorage.getItem('adminUsername') || 'Admin'}`;
 
@@ -358,49 +386,161 @@
                 window.location.href = './login.html';
             });
 
+            // Search and filter event listeners
+            document.getElementById('search-input').addEventListener('input', applyFilters);
+            document.getElementById('status-filter').addEventListener('change', applyFilters);
+            document.getElementById('sort-select').addEventListener('change', applyFilters);
+
             fetchProjects(); // Load initial data
         });
 
         // PROJECT FUNCTIONS 
         async function fetchProjects() {
             const tbody = document.getElementById('projects-tbody');
-            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Loading...</td></tr>';
+            const refreshBtn = document.getElementById('refresh-btn');
+            
+            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500"><div class="flex items-center justify-center"><div class="spinner mr-3"></div>Loading...</div></td></tr>';
+            
+            if (refreshBtn) {
+                refreshBtn.disabled = true;
+                refreshBtn.innerHTML = '<div class="spinner mr-2"></div>Refreshing...';
+            }
+
             try {
                 const res = await fetch(`${API_BASE}/projects`, { headers });
-                if (!res.ok) throw new Error(res.status);
+                if (!res.ok) {
+                    if (res.status === 401 || res.status === 403) {
+                        window.location.href = './login.html';
+                        return;
+                    }
+                    throw new Error(`HTTP ${res.status}`);
+                }
                 projectsCache = await res.json();
-                renderProjects(projectsCache);
+                filteredProjects = [...projectsCache];
+                updateStatistics();
+                applyFilters();
+                showToast('Projects loaded successfully', 'success');
             } catch (e) {
-                if (e.message === '401' || e.message === '403') window.location.href = './login.html';
-                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error loading projects.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error loading projects: ${e.message}</td></tr>`;
+                showToast('Failed to load projects', 'error');
+            } finally {
+                if (refreshBtn) {
+                    refreshBtn.disabled = false;
+                    refreshBtn.innerHTML = '<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>Refresh';
+                }
             }
+        }
+
+        function updateStatistics() {
+            const stats = {
+                total: projectsCache.length,
+                new: projectsCache.filter(p => p.status === 'New').length,
+                progress: projectsCache.filter(p => p.status === 'In Progress').length,
+                completed: projectsCache.filter(p => p.status === 'Completed').length
+            };
+
+            document.getElementById('stat-total').textContent = stats.total;
+            document.getElementById('stat-new').textContent = stats.new;
+            document.getElementById('stat-progress').textContent = stats.progress;
+            document.getElementById('stat-completed').textContent = stats.completed;
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const statusFilter = document.getElementById('status-filter').value;
+            const sortBy = document.getElementById('sort-select').value;
+
+            // Filter
+            filteredProjects = projectsCache.filter(p => {
+                const matchesSearch = !searchTerm || 
+                    p.projectName?.toLowerCase().includes(searchTerm) ||
+                    p.clientName?.toLowerCase().includes(searchTerm) ||
+                    p.contactPerson?.toLowerCase().includes(searchTerm) ||
+                    p.email?.toLowerCase().includes(searchTerm);
+                
+                const matchesStatus = !statusFilter || p.status === statusFilter;
+                
+                return matchesSearch && matchesStatus;
+            });
+
+            // Sort
+            filteredProjects.sort((a, b) => {
+                switch (sortBy) {
+                    case 'newest':
+                        return new Date(b.submissionDate) - new Date(a.submissionDate);
+                    case 'oldest':
+                        return new Date(a.submissionDate) - new Date(b.submissionDate);
+                    case 'budget-high':
+                        return (b.budget || 0) - (a.budget || 0);
+                    case 'budget-low':
+                        return (a.budget || 0) - (b.budget || 0);
+                    case 'name':
+                        return (a.projectName || '').localeCompare(b.projectName || '');
+                    default:
+                        return 0;
+                }
+            });
+
+            renderProjects(filteredProjects);
         }
 
         function renderProjects(data) {
             const tbody = document.getElementById('projects-tbody');
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No projects found.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No projects found matching your criteria.</td></tr>';
                 return;
             }
             tbody.innerHTML = data.map(p => `
-                <tr class="hover:bg-gray-50">
+                <tr class="hover:bg-gray-50 transition-colors">
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <select onchange="updateStatus(${p.id}, this.value)" class="text-sm rounded-full px-3 py-1 font-semibold ${getStatusColor(p.status)} border-0 cursor-pointer focus:ring-2 focus:ring-blue-500">
+                        <select onchange="updateStatus(${p.id}, this.value, event)" class="text-sm rounded-full px-3 py-1 font-semibold ${getStatusColor(p.status)} border-0 cursor-pointer focus:ring-2 focus:ring-blue-500 transition-all">
                             <option value="New" ${p.status === 'New' ? 'selected' : ''}>New</option>
                             <option value="Reviewing" ${p.status === 'Reviewing' ? 'selected' : ''}>Reviewing</option>
                             <option value="In Progress" ${p.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
                             <option value="Completed" ${p.status === 'Completed' ? 'selected' : ''}>Completed</option>
                         </select>
                     </td>
-                    <td class="px-6 py-4"><div class="text-sm font-medium text-gray-900">${p.projectName}</div></td>
-                    <td class="px-6 py-4"><div class="text-sm text-gray-900">${p.clientName}</div><div class="text-sm text-gray-500">${p.contactPerson}</div></td>
-                    <td class="px-6 py-4"><div class="text-sm text-gray-900">$${Number(p.budget).toLocaleString()}</div><div class="text-sm text-gray-500">Due: ${p.dueDate}</div></td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600" onclick="openDetailsModal(${p.id})">${escapeHtml(p.projectName || 'N/A')}</div>
+                        ${p.projectDescription ? `<div class="text-xs text-gray-500 mt-1 truncate max-w-xs">${escapeHtml(p.projectDescription)}</div>` : ''}
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900">${escapeHtml(p.clientName || 'N/A')}</div>
+                        <div class="text-sm text-gray-500">${escapeHtml(p.contactPerson || 'N/A')}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm font-medium text-gray-900">$${Number(p.budget || 0).toLocaleString()}</div>
+                        <div class="text-sm text-gray-500">Due: ${formatDate(p.dueDate)}</div>
+                        ${p.duration ? `<div class="text-xs text-gray-400 mt-1">${p.duration} months</div>` : ''}
+                    </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button onclick="openEditModal(${p.id})" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
-                        <button onclick="deleteProject(${p.id})" class="text-red-600 hover:text-red-900">Delete</button>
+                        <div class="flex items-center justify-end gap-2">
+                            <button onclick="openDetailsModal(${p.id})" class="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50" title="View Details">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="openEditModal(${p.id})" class="text-indigo-600 hover:text-indigo-900 p-1 rounded hover:bg-indigo-50" title="Edit">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="confirmDelete(${p.id})" class="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50" title="Delete">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         function getStatusColor(status) {
@@ -413,7 +553,14 @@
             }
         }
 
-        async function updateStatus(id, newStatus) {
+        async function updateStatus(id, newStatus, event) {
+            const selectElement = event.target;
+            const originalStatus = projectsCache.find(p => p.id === id)?.status;
+            const originalClass = selectElement.className;
+
+            // Optimistic update
+            selectElement.className = `text-sm rounded-full px-3 py-1 font-semibold ${getStatusColor(newStatus)} border-0 cursor-pointer focus:ring-2 focus:ring-blue-500 transition-all`;
+            
             try {
                 const response = await fetch(`${API_BASE}/projects/${id}/status`, {
                     method: 'PATCH',
@@ -422,40 +569,206 @@
                 });
                 if (!response.ok) throw new Error('Server update failed');
 
-                // Update color immediately without full refresh
-                const selectElement = event.target;
-                selectElement.className = `text-sm rounded-full px-3 py-1 font-semibold ${getStatusColor(newStatus)} border-0 cursor-pointer focus:ring-2 focus:ring-blue-500`;
+                // Update cache
+                const project = projectsCache.find(p => p.id === id);
+                if (project) project.status = newStatus;
+                
+                updateStatistics();
+                showToast('Status updated successfully', 'success');
             } catch (error) {
-                alert('Failed to update status. Please try again.');
-                fetchProjects(); // Re-fetch to undo visual change
+                // Revert on error
+                selectElement.value = originalStatus;
+                selectElement.className = originalClass;
+                showToast('Failed to update status', 'error');
             }
         }
 
-        async function deleteProject(id) {
-            if (!confirm('Are you sure you want to delete this project?')) return;
-            await fetch(`${API_BASE}/projects/${id}`, { method: 'DELETE', headers });
-            fetchProjects();
+        function confirmDelete(id) {
+            deleteProjectId = id;
+            document.getElementById('confirm-modal').classList.remove('hidden');
         }
 
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+            deleteProjectId = null;
+        }
+
+        async function deleteProject() {
+            if (!deleteProjectId) return;
+            
+            const deleteBtn = document.getElementById('confirm-delete-btn');
+            deleteBtn.disabled = true;
+            deleteBtn.textContent = 'Deleting...';
+
+            try {
+                const response = await fetch(`${API_BASE}/projects/${deleteProjectId}`, { 
+                    method: 'DELETE', 
+                    headers 
+                });
+                
+                if (!response.ok) throw new Error('Delete failed');
+                
+                projectsCache = projectsCache.filter(p => p.id !== deleteProjectId);
+                updateStatistics();
+                applyFilters();
+                closeConfirmModal();
+                showToast('Project deleted successfully', 'success');
+            } catch (error) {
+                showToast('Failed to delete project', 'error');
+            } finally {
+                deleteBtn.disabled = false;
+                deleteBtn.textContent = 'Delete';
+            }
+        }
+
+        function openDetailsModal(id) {
+            const p = projectsCache.find(p => p.id === id);
+            if (!p) return;
+
+            const content = document.getElementById('details-content');
+            content.innerHTML = `
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between pb-4 border-b">
+                        <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(p.status)}">${p.status}</span>
+                        <span class="text-sm text-gray-500">Submitted: ${formatDate(p.submissionDate)}</span>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-500 mb-1">Project Name</h4>
+                        <p class="text-lg font-semibold text-gray-900">${escapeHtml(p.projectName || 'N/A')}</p>
+                    </div>
+
+                    ${p.projectDescription ? `
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-500 mb-1">Description</h4>
+                        <p class="text-gray-700 whitespace-pre-wrap">${escapeHtml(p.projectDescription)}</p>
+                    </div>
+                    ` : ''}
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 mb-1">Client Name</h4>
+                            <p class="text-gray-900">${escapeHtml(p.clientName || 'N/A')}</p>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 mb-1">Contact Person</h4>
+                            <p class="text-gray-900">${escapeHtml(p.contactPerson || 'N/A')}</p>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 mb-1">Email</h4>
+                            <a href="mailto:${p.email}" class="text-blue-600 hover:underline">${escapeHtml(p.email || 'N/A')}</a>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 mb-1">Phone</h4>
+                            <a href="tel:${p.phone}" class="text-blue-600 hover:underline">${escapeHtml(p.phone || 'N/A')}</a>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 mb-1">Budget</h4>
+                            <p class="text-lg font-semibold text-gray-900">$${Number(p.budget || 0).toLocaleString()}</p>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 mb-1">Due Date</h4>
+                            <p class="text-gray-900">${formatDate(p.dueDate)}</p>
+                        </div>
+                        ${p.duration ? `
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 mb-1">Duration</h4>
+                            <p class="text-gray-900">${p.duration} months</p>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="flex gap-3 pt-4 border-t">
+                        <button onclick="openEditModal(${p.id}); closeDetailsModal();" 
+                            class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                            Edit Project
+                        </button>
+                        <button onclick="closeDetailsModal()" 
+                            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('details-modal').classList.remove('hidden');
+        }
+
+        function closeDetailsModal() {
+            document.getElementById('details-modal').classList.add('hidden');
+        }
 
         function openEditModal(id) {
             const p = projectsCache.find(p => p.id === id);
+            if (!p) return;
+
             document.getElementById('edit-id').value = p.id;
-            ['clientName', 'contactPerson', 'projectName', 'email', 'phone', 'budget', 'duration'].forEach(f => document.getElementById(`edit-${f}`).value = p[f] || '');
+            document.getElementById('edit-clientName').value = p.clientName || '';
+            document.getElementById('edit-contactPerson').value = p.contactPerson || '';
+            document.getElementById('edit-projectName').value = p.projectName || '';
+            document.getElementById('edit-email').value = p.email || '';
+            document.getElementById('edit-phone').value = p.phone || '';
+            document.getElementById('edit-budget').value = p.budget || '';
+            document.getElementById('edit-duration').value = p.duration || '';
             document.getElementById('edit-dueDate').value = p.dueDate ? p.dueDate.split('T')[0] : '';
+            
             document.getElementById('edit-modal').classList.remove('hidden');
         }
 
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+            document.getElementById('edit-form').reset();
+        }
+
+        // Edit form submission
         document.getElementById('edit-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const id = document.getElementById('edit-id').value;
-            const data = {};
-            ['clientName', 'contactPerson', 'projectName', 'email', 'phone', 'dueDate', 'budget', 'duration'].forEach(f => data[f] = document.getElementById(`edit-${f}`).value);
+            const saveBtn = document.getElementById('save-btn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
 
-            await fetch(`${API_BASE}/projects/${id}`, { method: 'PUT', headers, body: JSON.stringify(data) });
-            document.getElementById('edit-modal').classList.add('hidden');
-            fetchProjects();
+            const id = document.getElementById('edit-id').value;
+            const data = {
+                clientName: document.getElementById('edit-clientName').value,
+                contactPerson: document.getElementById('edit-contactPerson').value,
+                projectName: document.getElementById('edit-projectName').value,
+                email: document.getElementById('edit-email').value,
+                phone: document.getElementById('edit-phone').value,
+                dueDate: document.getElementById('edit-dueDate').value,
+                budget: parseFloat(document.getElementById('edit-budget').value),
+                duration: document.getElementById('edit-duration').value ? parseInt(document.getElementById('edit-duration').value) : null
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/projects/${id}`, { 
+                    method: 'PUT', 
+                    headers, 
+                    body: JSON.stringify(data) 
+                });
+                
+                if (!response.ok) throw new Error('Update failed');
+                
+                // Update cache
+                const projectIndex = projectsCache.findIndex(p => p.id === parseInt(id));
+                if (projectIndex !== -1) {
+                    projectsCache[projectIndex] = { ...projectsCache[projectIndex], ...data };
+                }
+                
+                closeEditModal();
+                applyFilters();
+                showToast('Project updated successfully', 'success');
+            } catch (error) {
+                showToast('Failed to update project', 'error');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Changes';
+            }
         });
+
+        // Delete confirmation handler
+        document.getElementById('confirm-delete-btn').addEventListener('click', deleteProject);
     </script>
 </body>
 
