@@ -82,7 +82,7 @@
 
                     <form id="project-form" class="space-y-8">
                         <fieldset class="space-y-6">
-                            <legend class="text-xl font-semibold text-gray-800 mb-4 pb-1 border-b">Step 1: Client
+                            <legend class="text-xl font-semibold text-gray-800 mb-4 pb-1 border-b">Client
                                 Details</legend>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -112,13 +112,22 @@
                         </fieldset>
 
                         <fieldset class="space-y-6">
-                            <legend class="text-xl font-semibold text-gray-800 mb-4 pb-1 border-b">Step 2: Project
+                            <legend class="text-xl font-semibold text-gray-800 mb-4 pb-1 border-b"> Project
                                 Details</legend>
                             <div>
                                 <label for="projectName" class="block text-sm font-medium text-gray-700 mb-1">Project
                                     Name <span class="text-red-500">*</span></label>
                                 <input type="text" id="projectName" placeholder="e.g., Mobile Inventory Management App"
                                     class="form-input" required>
+                            </div>
+                            
+                            <div>
+                                <label for="projectDescription" class="block text-sm font-medium text-gray-700 mb-1">Project Description</label>
+                                <textarea id="projectDescription" placeholder="Briefly describe your project, its goals, and key features."
+                                    rows="4" maxlength="500" class="form-input"></textarea>
+                                <p class="text-xs text-gray-500 mt-1 text-right">
+                                    <span id="description-count">0</span> / 500 characters
+                                </p>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
@@ -226,7 +235,6 @@
         const API_BASE = window.API_BASE_URL || 'http://localhost:3000/api';
         const SERVER_ENDPOINT = `${API_BASE}/project-submission`;
 
-        // All other JavaScript from your file is correct
         async function exponentialBackoffFetch(url, options, maxRetries = 3) {
             for (let i = 0; i < maxRetries; i++) {
                 try {
@@ -286,15 +294,13 @@
             const form = document.getElementById('project-form');
             const messageBox = document.getElementById('message-box');
             
-            // Add character counter for project description if field exists
+            // Add character counter for project description (Now guaranteed to exist)
             const projectDescriptionField = document.getElementById('projectDescription');
-            if (projectDescriptionField) {
-                const counter = document.getElementById('description-count');
-                if (counter) {
-                    projectDescriptionField.addEventListener('input', () => {
-                        counter.textContent = projectDescriptionField.value.length;
-                    });
-                }
+            const counter = document.getElementById('description-count');
+            if (projectDescriptionField && counter) {
+                projectDescriptionField.addEventListener('input', () => {
+                    counter.textContent = projectDescriptionField.value.length;
+                });
             }
 
             function showMessage(message, isError) {
@@ -335,6 +341,7 @@
                 const email = getFieldValue('email');
                 const phone = getFieldValue('phone');
                 getFieldValue('projectName');
+                getFieldValue('projectDescription'); // <-- Included Project Description
                 const dueDate = getFieldValue('dueDate');
                 const budget = getFieldValue('budget');
                 getFieldValue('duration');
@@ -412,7 +419,7 @@
                     showMessage(errorMessage, true);
                 } finally {
                     submitButton.disabled = false;
-                    submitButton.textContent = 'Submit Inquiry';
+                    submitButton.textContent = 'Submit Inquiry →';
                 }
             });
         });

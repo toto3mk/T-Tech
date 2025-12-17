@@ -23,7 +23,7 @@ const db = new sqlite3.Database("./projects.db", (err) => {
 
 // Initialize Database Tables
 db.serialize(() => {
-  // Inquiries Table (Added 'status' column)
+  // Inquiries Table (Includes 'projectDescription' and 'status')
   db.run(`CREATE TABLE IF NOT EXISTS inquiries (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         submissionDate DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -33,7 +33,7 @@ db.serialize(() => {
         email TEXT,
         phone TEXT,
         projectName TEXT,
-        projectDescription TEXT,
+        projectDescription TEXT,  -- Field for project description
         dueDate TEXT,
         budget REAL,
         duration INTEGER
@@ -104,6 +104,7 @@ function authenticateToken(req, res, next) {
 // Submit New Project
 app.post("/api/project-submission", (req, res) => {
   const data = req.body;
+  // Ensure the query includes projectDescription
   const sql = `INSERT INTO inquiries (clientName, contactPerson, email, phone, projectName, projectDescription, dueDate, budget, duration) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
   const params = [
     data.clientName,
@@ -111,7 +112,7 @@ app.post("/api/project-submission", (req, res) => {
     data.email,
     data.phone,
     data.projectName,
-    data.projectDescription,
+    data.projectDescription, // <-- Included data parameter
     data.dueDate,
     data.budget,
     data.duration,
@@ -179,6 +180,7 @@ app.delete("/api/projects/:id", authenticateToken, (req, res) => {
 // project details
 app.put("/api/projects/:id", authenticateToken, (req, res) => {
   const d = req.body;
+  // Ensure the update query includes projectDescription
   const sql = `UPDATE inquiries SET clientName=?, contactPerson=?, email=?, phone=?, projectName=?, projectDescription=?, dueDate=?, budget=?, duration=? WHERE id=?`;
   const params = [
     d.clientName,
@@ -186,7 +188,7 @@ app.put("/api/projects/:id", authenticateToken, (req, res) => {
     d.email,
     d.phone,
     d.projectName,
-    d.projectDescription || null,
+    d.projectDescription || null, // <-- Included data parameter
     d.dueDate,
     d.budget,
     d.duration,
