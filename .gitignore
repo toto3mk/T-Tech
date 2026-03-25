@@ -1,0 +1,14 @@
+# Node.js dependencies
+node_modules/
+
+# Secret environment variables
+.env
+
+# Database files (contains user data!)
+*.db
+*.sqlite
+*.sqlite3
+
+# Operating System files
+.DS_Store
+Thumbs.db

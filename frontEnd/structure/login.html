@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="T-Tech Solutions Admin Portal - Secure login for administrators">
+    <meta name="robots" content="noindex, nofollow">
+    <title>T-Tech Admin Login</title>
+    <link rel="stylesheet" href="../styles/login.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+   
+</head>
+
+<body class="flex items-center justify-center p-4">
+
+    <main class="max-w-md w-full mx-auto glass-panel rounded-3xl overflow-hidden fade-in relative z-10">
+        <!-- Header Section -->
+        <div class="px-8 pt-12 pb-6 text-center relative">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 mb-6 text-purple-400 shadow-lg shadow-purple-500/10">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <div class="text-3xl font-extrabold font-outfit tracking-wider mb-2">
+                T-Tech <span class="text-gradient">Admin</span>
+            </div>
+            <p class="text-sm text-slate-400 font-medium tracking-wide uppercase">Secure Portal Access</p>
+        </div>
+
+         <!-- Form Section -->
+        <div class="px-8 pb-10">
+            <div id="message-box" class="hidden p-4 mb-6 rounded-xl font-medium text-center text-sm flex items-center justify-center gap-2 border" role="alert">
+                <span id="message-icon"></span>
+                <span id="message-text"></span>
+            </div>
+
+            <form id="login-form" class="space-y-5" novalidate>
+                <div>
+                    <label for="username" class="block text-sm font-medium text-slate-300 mb-2">
+                        Username
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                        </div>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username"
+                            class="form-input w-full py-3.5 pl-11 pr-4 rounded-xl" 
+                            placeholder="Enter your username"
+                            autocomplete="username"
+                            required
+                        >
+                        <div id="username-error" class="hidden text-red-500 text-xs mt-2" role="alert"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-slate-300 mb-2">
+                        Password
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password"
+                            class="form-input w-full py-3.5 pl-11 pr-12 rounded-xl" 
+                            placeholder="••••••••"
+                            autocomplete="current-password"
+                            required
+                        >
+                        <button 
+                            type="button" 
+                            id="toggle-password" 
+                            class="absolute right-4 top-1/2 -translate-y-1/2 password-toggle"
+                            aria-label="Toggle password visibility"
+                        >
+                            <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            <svg id="eye-off-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                            </svg>
+                        </button>
+                        <div id="password-error" class="hidden text-red-500 text-xs mt-2" role="alert"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-sm py-2">
+                    <label class="flex items-center cursor-pointer group">
+                        <input type="checkbox" id="remember-me" class="checkbox-custom">
+                        <span class="ml-3 text-slate-300 group-hover:text-white transition-colors">Keep me logged in</span>
+                    </label>
+                </div>
+
+                <div class="pt-2">
+                    <button 
+                        type="submit" 
+                        id="submit-button"
+                        class="w-full btn-gradient text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center gap-2"
+                    >
+                        <span id="button-text">Authenticate</span>
+                        <div id="button-spinner" class="spinner hidden"></div>
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-8 text-center border-t border-white/5 pt-6">
+                <a href="./index.html" class="text-sm text-slate-400 hover:text-white transition-colors inline-flex items-center gap-2 group">
+                    <div class="p-1.5 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                    </div>
+                    Return to main site
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script src="../scripts/config.js"></script>
+    <script src="../scripts/login.js">
+      
+    </script>
+</body>
+</html>

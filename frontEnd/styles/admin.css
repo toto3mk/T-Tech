@@ -1,0 +1,65 @@
+   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+        :root {
+            --primary: #c084fc;
+            --dark-bg: #030014;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.1), transparent 50%);
+            color: #f8fafc;
+        }
+
+        h1, h2, h3, .font-outfit { font-family: 'Outfit', sans-serif; }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #c084fc 0%, #e879f9 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .toast {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            padding: 16px 24px; border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease-out; max-width: 400px;
+            backdrop-filter: blur(10px); background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1); color: white;
+        }
+
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        .toast-success { border-left: 4px solid #34d399; }
+        .toast-error { border-left: 4px solid #f43f5e; }
+        .toast-info { border-left: 4px solid #60a5fa; }
+
+        .modal-overlay { backdrop-filter: blur(8px); background: rgba(0, 0, 0, 0.6); }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1); border-top: 3px solid #c084fc;
+            border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite;
+            display: inline-block; margin-right: 8px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .table-input {
+            background: rgba(255, 255, 255, 0.05); color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .table-input:focus { border-color: var(--primary); outline: none; }
+        
+        /* Table overrides */
+        thead { background: rgba(255, 255, 255, 0.02); }
+        tbody tr { border-bottom: 1px solid rgba(255, 255, 255, 0.05); transition: background 0.2s; }
+        tbody tr:hover { background: rgba(255, 255, 255, 0.02); }

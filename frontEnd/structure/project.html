@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Submit your project inquiry to T-Tech Solutions.">
+    <title>T-Tech Software Solutions - Project Inquiry</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="../styles/project.css">
+
+    
+</head>
+
+<body class="flex flex-col">
+    <header class="sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <a href="./index.html" class="flex items-center gap-2 group">
+                <div
+                    class="p-1.5 rounded-lg bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 text-indigo-400 group-hover:scale-105 transition-transform">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
+                </div>
+                <div class="text-xl font-extrabold font-outfit tracking-wider text-white">T-Tech <span
+                        class="font-medium text-slate-300">Solutions</span></div>
+            </a>
+            <nav class="hidden md:flex space-x-8 text-sm font-medium">
+                <a href="./index.html" class="text-slate-400 hover:text-white transition-colors">Home</a>
+                <a href="#form-section" class="text-indigo-400 border-b-2 border-indigo-400 pb-1">Start Project</a>
+                <a href="mailto:hohzjrawy@gmail.com" id="contact-link" class="text-slate-400 hover:text-white transition-colors">Contact</a>
+            </nav>
+        </div>
+    </header>
+    <main class="flex-grow py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold font-outfit tracking-tight mb-4 text-white">Start Your <span
+                    class="text-gradient">Project Inquiry</span></h1>
+            <p class="text-slate-400 text-lg">Tell us about your vision. Our experts will craft the perfect technical
+                roadmap for your success</p>
+        </div>
+        <section id="form-section" class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <div class="lg:col-span-2 glass-panel rounded-3xl p-8 md:p-10 border border-white/5">
+                    <h2 class="text-2xl font-bold font-outfit mb-6 pb-4 border-b border-white/10 text-white">Project
+                        Consultation Details</h2>
+                    <div id="message-box" class="hidden p-4 mb-6 rounded-xl font-medium text-center text-sm border"
+                        role="alert"></div>
+                    <form id="project-form" class="space-y-8">
+                        <div class="space-y-6">
+                            <h3 class="text-lg font-semibold text-indigo-300 font-outfit flex items-center gap-2"><svg
+                                    class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>Client Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div><label class="block text-sm text-slate-300 mb-1.5">Company / Client <span
+                                            class="text-pink-500">*</span></label><input type="text" id="clientName"
+                                        class="form-input" required></div>
+                                <div><label class="block text-sm text-slate-300 mb-1.5">Contact Person <span
+                                            class="text-pink-500">*</span></label><input type="text" id="contactPerson"
+                                        class="form-input" required></div>
+                                <div><label class="block text-sm text-slate-300 mb-1.5">Email Address <span
+                                            class="text-pink-500">*</span></label><input type="email" id="email"
+                                        class="form-input" required></div>
+                                <div><label class="block text-sm text-slate-300 mb-1.5">Phone Number <span
+                                            class="text-pink-500">*</span></label><input type="tel" id="phone"
+                                        class="form-input" required></div>
+                            </div>
+                        </div>
+                        <div class="space-y-6">
+                            <h3 class="text-lg font-semibold text-purple-300 font-outfit flex items-center gap-2"><svg
+                                    class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                                    </path>
+                                </svg>Project Scope</h3>
+                            <div><label class="block text-sm text-slate-300 mb-1.5">Project Name <span
+                                        class="text-pink-500">*</span></label><input type="text" id="projectName"
+                                    class="form-input" required></div>
+                            <div><label class="block text-sm text-slate-300 mb-1.5">Project Description</label><textarea
+                                    id="projectDescription" rows="4" maxlength="500" class="form-input"></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                <div><label class="block text-sm text-slate-300 mb-1.5">Target Due Date <span
+                                            class="text-pink-500">*</span></label><input type="date" id="dueDate"
+                                        class="form-input" required></div>
+                                <div><label class="block text-sm text-slate-300 mb-1.5">Budget ($) <span
+                                            class="text-pink-500">*</span></label><input type="number" id="budget"
+                                        min="1" class="form-input" required></div>
+                                <div><label class="block text-sm text-slate-300 mb-1.5">Duration (Months)</label><input
+                                        type="number" id="duration" min="1" class="form-input"></div>
+                            </div>
+                        </div>
+                        <div class="pt-4"><button type="submit" id="submitBtn"
+                                class="w-full btn-gradient text-white font-bold py-4 rounded-xl flex justify-center gap-2">Submit
+                                Inquiry</button></div>
+                    </form>
+                </div>
+                <div class="lg:col-span-1">
+                    <div class="glass-panel p-8 rounded-3xl sticky top-24 border border-white/5">
+                        <h3 class="text-xl font-bold font-outfit text-white mb-6">How It Works</h3>
+                        <ul class="relative pl-6 space-y-8">
+                            <li class="relative pl-8">
+                                <div class="timeline-line"></div>
+                                <div class="timeline-dot shadow-indigo-500/50">1</div>
+                                <h4 class="font-semibold text-white"> Submission</h4>
+                                <p class="text-sm text-slate-400">Fill out the form with requirements</p>
+                            </li>
+                            <li class="relative pl-8">
+                                <div class="timeline-line"></div>
+                                <div class="timeline-dot shadow-purple-500/50">2 </div>
+                                <h4 class="font-semibold text-white">Discovery Call</h4>
+                                <p class="text-sm text-slate-400">Our team contacts you</p>
+                            </li>
+                            <li class="relative pl-8">
+                                <div class="timeline-dot shadow-teal-500/50">3</div>
+                                <h4 class="font-semibold text-white">Proposal</h4>
+                                <p class="text-sm text-slate-400">Receive roadmap</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="border-t border-white/5 py-8 mt-auto text-center">
+        <p class="text-sm text-slate-500">&copy; <span id="currentYear"></span> T-Tech Software Solutions</p>
+    </footer>
+    <script src="../scripts/config.js"></script>
+    <script src="../scripts/project.js" >
+        
+    </script>
+</body>
+
+</html>
