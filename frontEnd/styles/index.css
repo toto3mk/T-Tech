@@ -1,7 +1,7 @@
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
 
         :root {
-            --primary: #818cf8;
+            --primary: rgb(129, 140, 248);
             /* indigo-400 */
             --secondary: #c084fc;
             /* purple-400 */
