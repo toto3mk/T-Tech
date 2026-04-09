@@ -59,6 +59,77 @@
             cursor: pointer;
         }
 
+        /* Hide number input spin buttons */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        #projectDesc {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            color: white;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            min-height: 120px;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+
+        #projectDesc:focus {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(192, 132, 252, 0.2);
+        }
+
+        #rephraseBtn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        #rephraseBtn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(192, 132, 252, 0.4);
+        }
+
+        #rephraseBtn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #loadingSpin {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: var(--secondary);
+            text-align: center;
+            font-weight: 500;
+            animation: pulse-op 1.5s infinite;
+        }
+
+        @keyframes pulse-op {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
         .btn-gradient {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             transition: all 0.3s ease;

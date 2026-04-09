@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-
+const Groq = require("groq-sdk");
 const app = express();
 const port = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -87,7 +87,12 @@ app.use(helmet()); // Add basic HTTP headers for security
 app.use(cors());
 app.use(express.json({ limit: "10kb" })); // Limit payload to 10kb
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
-app.use(express.static(path.join(__dirname)));
+
+// Static file serving
+app.use(express.static(path.join(__dirname, 'frontEnd', 'pages')));
+app.use('/styles', express.static(path.join(__dirname, 'frontEnd', 'styles')));
+app.use('/scripts', express.static(path.join(__dirname, 'frontEnd', 'scripts')));
+app.use('/images', express.static(path.join(__dirname, 'frontEnd', 'pages', 'images')));
 
 // Rate Limiting Configs
 const apiLimiter = rateLimit({
@@ -116,16 +121,54 @@ function authenticateToken(req, res, next) {
   });
 }
 
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
+// Endpoint to help clients phrase their project description
+app.post("/api/rephrase", async (req, res) => {
+  const { draftText } = req.body;
+
+  if (!draftText) {
+    return res.status(400).json({ polishedText: "Please provide some text to rephrase." });
+  }
+
+  try {
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: "You are a technical project manager. Rephrase the user's input into professional technical requirements. DO NOT use ANY Markdown formatting (no asterisks `*` or `**` for bolding/lists). Use standard plain text formatting with clear paragraph breaks. For lists, explicitly use plain dashes (-) instead of bullets."
+        },
+        { role: "user", content: draftText }
+      ],
+      model: "llama-3.3-70b-versatile", // Make sure there is a comma after this line
+    });
+
+    const result = chatCompletion.choices[0]?.message?.content;
+    res.json({ polishedText: result });
+  } catch (error) {
+    console.error("GROQ API ERROR:", error); // Check your terminal for this!
+    res.status(500).json({
+      polishedText: "Error: Could not connect to AI. Please check your API key."
+    });
+  }
+});
+
 //    PUBLIC ROUTES
 // Submit New Project
 app.post("/api/project-submission", apiLimiter, (req, res) => {
   const data = req.body;
-  
+
   // Basic Server-Side Validation
   if (!data.clientName || !data.contactPerson || !data.email || !data.projectName || !data.dueDate || data.budget === undefined) {
     return res.status(400).json({ message: "Missing required fields." });
   }
-  
+  if (isNaN(data.budget) || data.budget <= 0) {
+    return res.status(400).json({ message: "Budget must be a positive number." });
+  }
+  if (data.duration !== undefined && data.duration !== null && (isNaN(data.duration) || data.duration <= 0)) {
+    return res.status(400).json({ message: "Duration must be a positive number." });
+  }
+
   // Ensure the query includes projectDescription
   const sql = `INSERT INTO inquiries (clientName, contactPerson, email, phone, projectName, projectDescription, dueDate, budget, duration) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
   const params = [
@@ -153,7 +196,7 @@ app.post("/api/project-submission", apiLimiter, (req, res) => {
 // Admin Login
 app.post("/api/login", authLimiter, (req, res) => {
   const { username, password } = req.body;
-  
+
   if (!username || !password) {
     return res.status(400).json({ message: "Username and password are required." });
   }
@@ -206,6 +249,17 @@ app.delete("/api/projects/:id", authenticateToken, (req, res) => {
 // project details
 app.put("/api/projects/:id", authenticateToken, (req, res) => {
   const d = req.body;
+  // Rigorous Validation for Updates
+  if (!d.clientName || !d.contactPerson || !d.email || !d.projectName || !d.dueDate || d.budget === undefined) {
+    return res.status(400).json({ error: "Missing required fields." });
+  }
+  if (isNaN(d.budget) || d.budget <= 0) {
+    return res.status(400).json({ error: "Budget must be a positive number." });
+  }
+  if (d.duration !== undefined && d.duration !== null && (isNaN(d.duration) || d.duration <= 0)) {
+    return res.status(400).json({ error: "Duration must be a positive number." });
+  }
+
   // Ensure the update query includes projectDescription
   const sql = `UPDATE inquiries SET clientName=?, contactPerson=?, email=?, phone=?, projectName=?, projectDescription=?, dueDate=?, budget=?, duration=? WHERE id=?`;
   const params = [
