@@ -2,12 +2,13 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
-const sqlite3 = require("sqlite3").verbose();
+const { Pool } = require("pg");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const Groq = require("groq-sdk");
+
 const app = express();
 const port = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -17,75 +18,69 @@ if (!JWT_SECRET) {
   process.exit(1);
 }
 
-// Database Setup
-const db = new sqlite3.Database("./backEnd/projects.db", (err) => {
-  if (err) console.error("Error connecting to database:", err.message);
-  else console.log("Connected to SQLite database.");
+// PostgreSQL Pool Setup
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false
 });
 
 // Initialize Database Tables
-db.serialize(() => {
-  // Inquiries Table (Includes 'projectDescription' and 'status')
-  db.run(`CREATE TABLE IF NOT EXISTS inquiries (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        submissionDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+async function initializeDatabase() {
+  const client = await pool.connect();
+  try {
+    // Create Inquiries Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS inquiries (
+        id SERIAL PRIMARY KEY,
+        "submissionDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         status TEXT DEFAULT 'New',
-        clientName TEXT,
-        contactPerson TEXT,
+        "clientName" TEXT,
+        "contactPerson" TEXT,
         email TEXT,
         phone TEXT,
-        projectName TEXT,
-        projectDescription TEXT,  -- Field for project description
-        dueDate TEXT,
+        "projectName" TEXT,
+        "projectDescription" TEXT,
+        "dueDate" TEXT,
         budget REAL,
         duration INTEGER
-    )`);
+      )
+    `);
 
-  // 2. Users Table
-  db.run(
-    `CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+    // Create Users Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
         username TEXT UNIQUE NOT NULL,
-        passwordHash TEXT NOT NULL,
+        "passwordHash" TEXT NOT NULL,
         role TEXT DEFAULT 'admin'
-    )`,
-    (err) => {
-      if (!err) {
-        // Check for default admin on startup
-        db.get(`SELECT * FROM users WHERE username = 'admin'`, (err, row) => {
-          if (!row) {
-            bcrypt.hash("password123", 10, (err, hash) => {
-              if (err) {
-                console.error("Error hashing password:", err.message);
-                return;
-              }
-              if (hash) {
-                db.run(
-                  `INSERT INTO users (username, passwordHash) VALUES (?, ?)`,
-                  ["admin", hash],
-                  (insertErr) => {
-                    if (insertErr) {
-                      console.error("Error creating default admin:", insertErr.message);
-                    } else {
-                      console.log(
-                        "Default admin user 'admin' (password123) created."
-                      );
-                    }
-                  }
-                );
-              }
-            });
-          }
-        });
-      }
+      )
+    `);
+
+    // Create default admin user if not exists
+    const { rows } = await client.query("SELECT * FROM users WHERE username = $1", ["admin"]);
+    if (rows.length === 0) {
+      const hash = await bcrypt.hash("password123", 10);
+      await client.query(
+        `INSERT INTO users (username, "passwordHash") VALUES ($1, $2)`,
+        ["admin", hash]
+      );
+      console.log("Default admin user 'admin' (password123) created.");
     }
-  );
-});
+
+    console.log("Database initialized successfully.");
+  } catch (err) {
+    console.error("Database initialization error:", err.message);
+  } finally {
+    client.release();
+  }
+}
+
+initializeDatabase();
 
 // Middleware
-app.use(helmet()); // Add basic HTTP headers for security
+app.use(helmet());
 app.use(cors());
-app.use(express.json({ limit: "10kb" })); // Limit payload to 10kb
+app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
 // Static file serving
@@ -96,14 +91,14 @@ app.use('/images', express.static(path.join(__dirname, 'frontEnd', 'pages', 'ima
 
 // Rate Limiting Configs
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per `window`
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: { message: "Too many requests, please try again later." }
 });
 
 const authLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10, // Limit each IP to 10 login requests per window
+  windowMs: 60 * 60 * 1000,
+  max: 10,
   message: { message: "Too many login attempts, please try again later." }
 });
 
@@ -123,7 +118,7 @@ function authenticateToken(req, res, next) {
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-// Endpoint to help clients phrase their project description
+// AI Rephrase Endpoint
 app.post("/api/rephrase", async (req, res) => {
   const { draftText } = req.body;
 
@@ -140,25 +135,25 @@ app.post("/api/rephrase", async (req, res) => {
         },
         { role: "user", content: draftText }
       ],
-      model: "llama-3.3-70b-versatile", // Make sure there is a comma after this line
+      model: "llama-3.3-70b-versatile",
     });
 
     const result = chatCompletion.choices[0]?.message?.content;
     res.json({ polishedText: result });
   } catch (error) {
-    console.error("GROQ API ERROR:", error); // Check your terminal for this!
+    console.error("GROQ API ERROR:", error);
     res.status(500).json({
       polishedText: "Error: Could not connect to AI. Please check your API key."
     });
   }
 });
 
-//    PUBLIC ROUTES
+// PUBLIC ROUTES
+
 // Submit New Project
-app.post("/api/project-submission", apiLimiter, (req, res) => {
+app.post("/api/project-submission", apiLimiter, async (req, res) => {
   const data = req.body;
 
-  // Basic Server-Side Validation
   if (!data.clientName || !data.contactPerson || !data.email || !data.projectName || !data.dueDate || data.budget === undefined) {
     return res.status(400).json({ message: "Missing required fields." });
   }
@@ -169,87 +164,75 @@ app.post("/api/project-submission", apiLimiter, (req, res) => {
     return res.status(400).json({ message: "Duration must be a positive number." });
   }
 
-  // Ensure the query includes projectDescription
-  const sql = `INSERT INTO inquiries (clientName, contactPerson, email, phone, projectName, projectDescription, dueDate, budget, duration) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  const params = [
-    data.clientName,
-    data.contactPerson,
-    data.email,
-    data.phone,
-    data.projectName,
-    data.projectDescription, // <-- Included data parameter
-    data.dueDate,
-    data.budget,
-    data.duration,
-  ];
-
-  db.run(sql, params, function (err) {
-    if (err)
-      return res
-        .status(500)
-        .json({ message: "Database error", error: err.message });
-    console.log(`New inquiry ID ${this.lastID}: ${data.projectName}`);
-    res.status(201).json({ message: "Inquiry received", id: this.lastID });
-  });
+  try {
+    const result = await pool.query(
+      `INSERT INTO inquiries ("clientName", "contactPerson", email, phone, "projectName", "projectDescription", "dueDate", budget, duration)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
+      [data.clientName, data.contactPerson, data.email, data.phone, data.projectName, data.projectDescription, data.dueDate, data.budget, data.duration]
+    );
+    const newId = result.rows[0].id;
+    console.log(`New inquiry ID ${newId}: ${data.projectName}`);
+    res.status(201).json({ message: "Inquiry received", id: newId });
+  } catch (err) {
+    res.status(500).json({ message: "Database error", error: err.message });
+  }
 });
 
 // Admin Login
-app.post("/api/login", authLimiter, (req, res) => {
+app.post("/api/login", authLimiter, async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
     return res.status(400).json({ message: "Username and password are required." });
   }
-  db.get("SELECT * FROM users WHERE username = ?", [username], (err, user) => {
-    if (err) return res.status(500).json({ message: "Database error" });
-    if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
-    bcrypt.compare(password, user.passwordHash, (err, isMatch) => {
-      if (isMatch) {
-        const token = jwt.sign(
-          { id: user.id, username: user.username, role: user.role },
-          JWT_SECRET,
-          { expiresIn: "2h" }
-        );
-        // Send back the username to be stored in localStorage
-        res.json({
-          message: "Login successful",
-          token,
-          username: user.username,
-        });
-      } else {
-        res.status(401).json({ message: "Invalid credentials" });
-      }
-    });
-  });
+  try {
+    const { rows } = await pool.query("SELECT * FROM users WHERE username = $1", [username]);
+    if (rows.length === 0) return res.status(401).json({ message: "Invalid credentials" });
+
+    const user = rows[0];
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+
+    if (isMatch) {
+      const token = jwt.sign(
+        { id: user.id, username: user.username, role: user.role },
+        JWT_SECRET,
+        { expiresIn: "2h" }
+      );
+      res.json({ message: "Login successful", token, username: user.username });
+    } else {
+      res.status(401).json({ message: "Invalid credentials" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Database error" });
+  }
 });
 
-//   PROTECTED PROJECT ROUTES
+// PROTECTED PROJECT ROUTES
 
 // GET all projects
-app.get("/api/projects", authenticateToken, (req, res) => {
-  db.all(
-    "SELECT * FROM inquiries ORDER BY submissionDate DESC",
-    [],
-    (err, rows) => {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json(rows);
-    }
-  );
+app.get("/api/projects", authenticateToken, async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT * FROM inquiries ORDER BY "submissionDate" DESC');
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // DELETE project
-app.delete("/api/projects/:id", authenticateToken, (req, res) => {
-  db.run("DELETE FROM inquiries WHERE id = ?", [req.params.id], function (err) {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({ message: "Project deleted", changes: this.changes });
-  });
+app.delete("/api/projects/:id", authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query("DELETE FROM inquiries WHERE id = $1", [req.params.id]);
+    res.json({ message: "Project deleted", changes: result.rowCount });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// project details
-app.put("/api/projects/:id", authenticateToken, (req, res) => {
+// UPDATE project details
+app.put("/api/projects/:id", authenticateToken, async (req, res) => {
   const d = req.body;
-  // Rigorous Validation for Updates
   if (!d.clientName || !d.contactPerson || !d.email || !d.projectName || !d.dueDate || d.budget === undefined) {
     return res.status(400).json({ error: "Missing required fields." });
   }
@@ -260,64 +243,46 @@ app.put("/api/projects/:id", authenticateToken, (req, res) => {
     return res.status(400).json({ error: "Duration must be a positive number." });
   }
 
-  // Ensure the update query includes projectDescription
-  const sql = `UPDATE inquiries SET clientName=?, contactPerson=?, email=?, phone=?, projectName=?, projectDescription=?, dueDate=?, budget=?, duration=? WHERE id=?`;
-  const params = [
-    d.clientName,
-    d.contactPerson,
-    d.email,
-    d.phone,
-    d.projectName,
-    d.projectDescription || null, // <-- Included data parameter
-    d.dueDate,
-    d.budget,
-    d.duration,
-    req.params.id,
-  ];
-  db.run(sql, params, function (err) {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({ message: "Project updated", changes: this.changes });
-  });
+  try {
+    const result = await pool.query(
+      `UPDATE inquiries SET "clientName"=$1, "contactPerson"=$2, email=$3, phone=$4, "projectName"=$5, "projectDescription"=$6, "dueDate"=$7, budget=$8, duration=$9 WHERE id=$10`,
+      [d.clientName, d.contactPerson, d.email, d.phone, d.projectName, d.projectDescription || null, d.dueDate, d.budget, d.duration, req.params.id]
+    );
+    res.json({ message: "Project updated", changes: result.rowCount });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.patch("/api/projects/:id/status", authenticateToken, (req, res) => {
+// UPDATE project status
+app.patch("/api/projects/:id/status", authenticateToken, async (req, res) => {
   const { status } = req.body;
-  db.run(
-    "UPDATE inquiries SET status = ? WHERE id = ?",
-    [status, req.params.id],
-    function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({
-        message: `Status updated to ${status}`,
-        changes: this.changes,
-      });
-    }
-  );
+  if (!status) return res.status(400).json({ error: "Status is required." });
+
+  try {
+    const result = await pool.query(
+      "UPDATE inquiries SET status = $1 WHERE id = $2",
+      [status, req.params.id]
+    );
+    res.json({ message: `Status updated to ${status}`, changes: result.rowCount });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Graceful shutdown
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
   console.log('\nShutting down gracefully...');
-  db.close((err) => {
-    if (err) {
-      console.error('Error closing database:', err.message);
-    } else {
-      console.log('Database connection closed.');
-    }
-    process.exit(0);
-  });
+  await pool.end();
+  console.log('Database pool closed.');
+  process.exit(0);
 });
 
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
   console.log('\nShutting down gracefully...');
-  db.close((err) => {
-    if (err) {
-      console.error('Error closing database:', err.message);
-    } else {
-      console.log('Database connection closed.');
-    }
-    process.exit(0);
-  });
+  await pool.end();
+  console.log('Database pool closed.');
+  process.exit(0);
 });
 
 // Start Server
