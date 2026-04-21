@@ -1,6 +1,7 @@
 const express = require("express");
 const { authenticateToken } = require("../middleware");
 const db = require("../db");
+const bcrypt = require("bcryptjs");
 
 const router = express.Router();
 
@@ -50,6 +51,33 @@ router.patch("/projects/:id/status", authenticateToken, (req, res) => {
   db.run("UPDATE inquiries SET status = ? WHERE id = ?", [status, req.params.id], function (err) {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ message: `Status updated to ${status}`, changes: this.changes });
+  });
+});
+
+// CREATE new user (admin only)
+router.post("/users", authenticateToken, (req, res) => {
+  const { username, password, role } = req.body;
+  
+  if (!username || !password) {
+    return res.status(400).json({ error: "Username and password are required." });
+  }
+
+  bcrypt.hash(password, 10, (err, hash) => {
+    if (err) return res.status(500).json({ error: "Error hashing password" });
+    
+    db.run(
+      `INSERT INTO users (username, passwordHash, role) VALUES (?, ?, ?)`,
+      [username, hash, role || 'admin'],
+      function (err) {
+        if (err) {
+          if (err.message.includes('UNIQUE')) {
+            return res.status(409).json({ error: "Username already exists" });
+          }
+          return res.status(500).json({ error: err.message });
+        }
+        res.status(201).json({ message: "User created", userId: this.lastID });
+      }
+    );
   });
 });
 
